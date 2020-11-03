@@ -5,7 +5,8 @@ h5py (version 2.9.0) hdf5 (version 1.10.4) hypopt (version 1.0.9)\
 nipy (version 0.4.1) numpy  (version 1.17.2) nibabel (version 2.5.0)\
 pandas (version 0.25.1) python (version 3.7.4) pytorch (version 1.2.0)\
 scikit-learn (version 0.21.3) scipy (version 1.2.0)\
-slurm (version 19.05.0) torchvision (version 0.4.0)
+slurm (version 19.05.0) torchvision (version 0.4.0)\
+pytorch-lightning (version 0.10.0)
 ## Custom Utilities
 utils.py\
 models.py
