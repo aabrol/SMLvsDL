@@ -37,3 +37,7 @@ tsneProjections.py
 JSA_DL_saliency.sh\
 run_DL_saliency.sh\
 run_DL_saliency.py
+## Comparative Analysis 
+Peng et al. model/pipeline used in Schulz et al.\
+JSA_run_train.sh\
+run_train.sh
