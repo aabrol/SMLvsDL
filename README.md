@@ -1,11 +1,12 @@
 # Citation - Abrol, A., Fu, Z., Salman, M. et al. Deep learning encodes robust discriminative neuroimaging representations to outperform standard machine learning. Nat Commun 12, 353 (2021). https://doi.org/10.1038/s41467-020-20655-6 
 ## Reproducible Example Code (reprex) https://github.com/aabrol/SMLvsDL/tree/master/reprex
-DL Classification/Regression Scripts\
-Slurm Script - JSA_DL.sh, run_DL.sh\
-Python - run_DL.py\
-Utilies - utils.py\
-DL Model - models.py
-Conda Environment - AA_DL.yml
+Reprex DL Classification/Regression Scripts
+Slurm script - https://github.com/aabrol/SMLvsDL/tree/master/reprex/JSA_DL.sh \
+Bash for python script - https://github.com/aabrol/SMLvsDL/tree/master/reprex/run_DL.sh \
+Python script - https://github.com/aabrol/SMLvsDL/tree/master/reprex/run_DL.py \
+Utilies - https://github.com/aabrol/SMLvsDL/tree/master/reprex/utils.py \
+DL Model - https://github.com/aabrol/SMLvsDL/tree/master/reprex/models.py \
+Conda Environment - https://github.com/aabrol/SMLvsDL/tree/master/reprex/AA_DL.yml
 ## Package Dependencies
 conda (version 4.8.3) cudatoolkit (version 10.0.13) cudnn (version 7.6.5)\
 h5py (version 2.9.0) hdf5 (version 1.10.4) hypopt (version 1.0.9)\
