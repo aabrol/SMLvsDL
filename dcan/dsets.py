@@ -38,5 +38,5 @@ def get_candidate_info_list(require_on_disk_bool=True):
                 ident,
             ))
 
-    candidate_info_list.sort(reverse=True)
+    candidate_info_list.sort()
     return candidate_info_list
