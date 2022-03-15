@@ -4,11 +4,14 @@ import glob
 import logging
 import os
 from collections import namedtuple
+from util.disk import getCache
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
 # log.setLevel(logging.INFO)
 log.setLevel(logging.DEBUG)
+
+raw_cache = getCache('part2ch10_raw')
 
 CandidateInfoTuple = namedtuple(
     'CandidateInfoTuple',
@@ -40,3 +43,9 @@ def get_candidate_info_list(require_on_disk_bool=True):
 
     candidate_info_list.sort()
     return candidate_info_list
+
+@raw_cache.memoize(typed=True)
+def getCtRawCandidate(series_uid, center_xyz, width_irc):
+    ct = getCt(series_uid)
+    ct_chunk, center_irc = ct.getRawCandidate(center_xyz, width_irc)
+    return ct_chunk, center_irc
