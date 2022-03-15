@@ -51,7 +51,7 @@ class LoesTrainingApp:
         )
 
         parser.add_argument('--tb-prefix',
-            default='p2ch11',
+            default='AlexNet',
             help="Data prefix to use for Tensorboard run. Defaults to chapter.",
         )
 
