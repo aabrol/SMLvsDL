@@ -1,37 +1,37 @@
-import numpy as np
-import pandas as pd
-import nipy
-import scipy as sp
-from sklearn.feature_selection import SelectKBest, f_classif, RFE
-from sklearn.svm import SVC
-from sklearn.random_projection import GaussianRandomProjection
-from hypopt import GridSearch
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import ElasticNet
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader, TensorDataset
-from models import AlexNet3D_Dropout, AlexNet3D_Deeper_Dropout, AlexNet3D_Dropout_Regression
-import numpy as np
-import pandas as pd
-import nipy
-from torch.autograd import Variable
-import torch.backends.cudnn as cudnn
-import torch.optim as optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_absolute_error, explained_variance_score, mean_squared_error, r2_score 
-import time
+import queue
 import sys
 import threading
-import queue
+import time
+
 import nibabel as nib
+import nipy
+import numpy as np
+import pandas as pd
+import scipy as sp
+import torch
+import torch.backends.cudnn as cudnn
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from hypopt import GridSearch
 from scipy.ndimage.interpolation import zoom
-from scipy import ndimage
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.feature_selection import SelectKBest, f_classif, RFE
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_absolute_error, explained_variance_score, \
+    mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.random_projection import GaussianRandomProjection
+from sklearn.svm import SVC
+from torch.autograd import Variable
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.utils.data import Dataset, DataLoader
+
+from models import AlexNet3D_Dropout, AlexNet3D_Deeper_Dropout, AlexNet3D_Dropout_Regression
+
 
 def read_X_y(df, mask, scorename):
     X,y = [],[]
@@ -372,9 +372,7 @@ def test_reg(dataloader, net, cuda_avl):
 
 def generate_validation_model(iter_,tr_smp_sizes,nReps,ssd,bs,nw,cuda_avl,mt,lr,ml,es,es_pat,es_va,nc,scorename):                           
     
-    if mt == 'AlexNet3D':
-        net = AlexNet3D(num_classes=nc)
-    elif mt == 'AlexNet3D_Dropout':
+    if mt == 'AlexNet3D_Dropout':
         net = AlexNet3D_Dropout(num_classes=nc)
     elif mt == 'AlexNet3D_Dropout_Regression':
         net = AlexNet3D_Dropout_Regression(num_classes=nc)
@@ -478,9 +476,7 @@ def evaluate_test_accuracy(iter_,tr_smp_sizes,nReps,mode,ssd,ml,mt,nc,t0,scorena
     # Load validated model
     net=0    
 
-    if mt == 'AlexNet3D':
-        net = AlexNet3D(num_classes=nc)
-    elif mt == 'AlexNet3D_Dropout':
+    if mt == 'AlexNet3D_Dropout':
         net = AlexNet3D_Dropout(num_classes=nc)
     elif mt == 'AlexNet3D_Dropout_Regression':
         net = AlexNet3D_Dropout_Regression(num_classes=nc)
@@ -572,9 +568,7 @@ def generate_validation_model_regression(iter_,tr_smp_sizes,nReps,ssd,bs,nw,cuda
     #mode = 'tr'
     #weights = gen_weights(mode,iter_,tr_smp_sizes,nReps,ssd)
     
-    if mt == 'AlexNet3D':
-        net = AlexNet3D(num_classes=nc)
-    elif mt == 'AlexNet3D_Dropout':
+    if mt == 'AlexNet3D_Dropout':
         net = AlexNet3D_Dropout(num_classes=nc)
     elif mt == 'AlexNet3D_Dropout_Regression':
         net = AlexNet3D_Dropout_Regression(num_classes=nc)

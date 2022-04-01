@@ -14,6 +14,8 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=aabrol@gsu.edu
 
+export SLURM_ARRAY_TASK_ID 0
+
 sleep 7s
 
 export OMP_NUM_THREADS=1

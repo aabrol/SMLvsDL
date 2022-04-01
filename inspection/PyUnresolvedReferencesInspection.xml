@@ -1,0 +1,350 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/tsneProjections.py</file>
+  <line>25</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/tsneProjections.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'arange'</description>
+  <highlighted_element>arange</highlighted_element>
+  <language>Python</language>
+  <offset>13</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/makePartitionsUKBB.py</file>
+  <line>18</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/makePartitionsUKBB.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'zipped'</description>
+  <highlighted_element>zipped</highlighted_element>
+  <language>Python</language>
+  <offset>19</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_DL_reg.py</file>
+  <line>68</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_DL_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'dataset'</description>
+  <highlighted_element>dataset</highlighted_element>
+  <language>Python</language>
+  <offset>3</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_DL_reg.py</file>
+  <line>70</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_DL_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'dataset'</description>
+  <highlighted_element>dataset</highlighted_element>
+  <language>Python</language>
+  <offset>5</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_SML_reg.py</file>
+  <line>27</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_SML_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'dataset'</description>
+  <highlighted_element>dataset</highlighted_element>
+  <language>Python</language>
+  <offset>3</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_SML_reg.py</file>
+  <line>30</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_SML_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'dataset'</description>
+  <highlighted_element>dataset</highlighted_element>
+  <language>Python</language>
+  <offset>5</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_SML_reg.py</file>
+  <line>91</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_SML_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'r_te'</description>
+  <highlighted_element>r_te</highlighted_element>
+  <language>Python</language>
+  <offset>125</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_SML_reg.py</file>
+  <line>91</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_SML_reg.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'p_te'</description>
+  <highlighted_element>p_te</highlighted_element>
+  <language>Python</language>
+  <offset>131</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_SML.py</file>
+  <line>44</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_SML.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'scorename'</description>
+  <highlighted_element>scorename</highlighted_element>
+  <language>Python</language>
+  <offset>71</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/run_DL.py</file>
+  <line>39</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/run_DL.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'np'</description>
+  <highlighted_element>np</highlighted_element>
+  <language>Python</language>
+  <offset>0</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>586</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'ut'</description>
+  <highlighted_element>ut</highlighted_element>
+  <language>Python</language>
+  <offset>15</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>589</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'ut'</description>
+  <highlighted_element>ut</highlighted_element>
+  <language>Python</language>
+  <offset>15</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>675</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D'</description>
+  <highlighted_element>AlexNet3D</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>689</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'ut'</description>
+  <highlighted_element>ut</highlighted_element>
+  <language>Python</language>
+  <offset>12</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>690</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'ut'</description>
+  <highlighted_element>ut</highlighted_element>
+  <language>Python</language>
+  <offset>17</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>719</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'r_te'</description>
+  <highlighted_element>r_te</highlighted_element>
+  <language>Python</language>
+  <offset>65</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>719</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'p_te'</description>
+  <highlighted_element>p_te</highlighted_element>
+  <language>Python</language>
+  <offset>71</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>749</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D'</description>
+  <highlighted_element>AlexNet3D</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>755</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D_Dropout_InstanceNorm_SmallConv'</description>
+  <highlighted_element>AlexNet3D_Dropout_InstanceNorm_SmallConv</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>40</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>757</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D_Dropout_InstanceNorm'</description>
+  <highlighted_element>AlexNet3D_Dropout_InstanceNorm</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>30</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>759</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D_Dropout_ProjsDropLin'</description>
+  <highlighted_element>AlexNet3D_Dropout_ProjsDropLin</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>30</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/utils.py</file>
+  <line>761</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/utils.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'AlexNet3D_Dropout_ProjsLin'</description>
+  <highlighted_element>AlexNet3D_Dropout_ProjsLin</highlighted_element>
+  <language>Python</language>
+  <offset>14</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/comparative/base.py</file>
+  <line>5</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/comparative/base.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>No module named 'pytorch_lightning'</description>
+  <highlighted_element>pytorch_lightning</highlighted_element>
+  <language>Python</language>
+  <offset>7</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/comparative/base.py</file>
+  <line>8</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/comparative/base.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'pytorch_lightning'</description>
+  <highlighted_element>pytorch_lightning</highlighted_element>
+  <language>Python</language>
+  <offset>5</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/comparative/base.py</file>
+  <line>8</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/comparative/base.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'Trainer'</description>
+  <highlighted_element>Trainer</highlighted_element>
+  <language>Python</language>
+  <offset>30</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/dcan/train_alex_net.py</file>
+  <line>9</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/dcan/train_alex_net.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'NiftiDataset' in '__init__.py'</description>
+  <highlighted_element>NiftiDataset</highlighted_element>
+  <language>Python</language>
+  <offset>10</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/dcan/train_alex_net.py</file>
+  <line>9</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/dcan/train_alex_net.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'NiftiDataset'</description>
+  <highlighted_element>NiftiDataset</highlighted_element>
+  <language>Python</language>
+  <offset>30</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/dcan/util/util.py</file>
+  <line>10</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/dcan/util/util.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Cannot find reference 'logconf' in 'util.py'</description>
+  <highlighted_element>logconf</highlighted_element>
+  <language>Python</language>
+  <offset>10</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/dcan/util/util.py</file>
+  <line>10</line>
+  <module>AlexNet_Abrol2021</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/dcan/util/util.py" />
+  <problem_class id="PyUnresolvedReferencesInspection" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Unresolved references</problem_class>
+  <description>Unresolved reference 'logging'</description>
+  <highlighted_element>logging</highlighted_element>
+  <language>Python</language>
+  <offset>25</offset>
+  <length>7</length>
+</problem>
+</problems>

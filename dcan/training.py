@@ -2,6 +2,7 @@ import argparse
 import datetime
 import os
 import sys
+from collections import Sequence
 
 import numpy as np
 
@@ -12,10 +13,17 @@ import torch.nn as nn
 from torch.optim import SGD, Adam
 from torch.utils.data import DataLoader
 
+from dcan.model import LoesModel
 from util.util import enumerateWithEstimate
-from NiftiDataset import NiftiDataset
+from torchio.data import SubjectsDataset
+from torchio.data.subject import Subject
+import torchio as tio
 from util.logconf import logging
-from models import AlexNet3D_Dropout
+from models import AlexNet3D_Dropout, BasicBlock
+from os import listdir
+from os.path import isfile, join
+
+from utils import returnModel
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
@@ -74,7 +82,13 @@ class LoesTrainingApp:
         self.optimizer = self.initOptimizer()
 
     def initModel(self):
-        model = AlexNet3D_Dropout()
+        iter_ = 0
+        tr_smp_sizes = [100, 200, 500, 1000, 2000, 5000, 10000]
+        nReps = 20
+        ml = '' + str(iter_) + '/'
+        mt = 'AlexNet3D_Dropout'
+        nc = 10
+        model = returnModel(iter_,tr_smp_sizes,nReps,ml,mt,nc)
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
@@ -87,40 +101,61 @@ class LoesTrainingApp:
         # return Adam(self.model.parameters())
 
     def initTrainDl(self):
-        train_ds = NiftiDataset(
-            val_stride=10,
-            isValSet_bool=False,
-        )
+        task_516_525_folder = '/home/feczk001/shared/data/nnUNet/raw_data/Task516_525'
+        images_folder = os.path.join(task_516_525_folder, 'images')
+        gt_labels_folder = os.path.join(task_516_525_folder, 'gt_labels/Fold1')
+
+        subjects = []
+        gt_labels_folder_files = [f for f in listdir(gt_labels_folder) if isfile(join(gt_labels_folder, f))]
+        for file in gt_labels_folder_files:
+            print(file)
+            base_name = file[:-len('.nii.gz')]
+            age_in_months = int(base_name[0])
+            subject = tio.Subject(
+                t1=tio.ScalarImage(os.path.join(images_folder, f'{base_name}_0000.nii.gz')),
+                label=tio.LabelMap(os.path.join(gt_labels_folder, f'{base_name}.nii.gz')),
+                age=age_in_months,
+            )
+            subjects.append(subject)
+
+        train_ds = SubjectsDataset(subjects)
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
             batch_size *= torch.cuda.device_count()
 
-        train_dl = DataLoader(
-            train_ds,
-            batch_size=batch_size,
-            num_workers=self.cli_args.num_workers,
-            pin_memory=self.use_cuda,
-        )
+        train_dl = DataLoader(train_ds, batch_size=4, num_workers=4)
 
         return train_dl
 
+
     def initValDl(self):
-        val_ds = NiftiDataset(
-            val_stride=10,
-            isValSet_bool=True,
-        )
+        task_516_525_folder = '/home/feczk001/shared/data/nnUNet/raw_data/Task516_525'
+        images_folder = os.path.join(task_516_525_folder, 'images')
+        gt_labels_folder = os.path.join(task_516_525_folder, 'gt_labels/Fold0')
+
+        subjects = []
+        gt_labels_folder_files = [f for f in listdir(gt_labels_folder) if isfile(join(gt_labels_folder, f))]
+        for file in gt_labels_folder_files:
+            print(file)
+            base_name = file[:-len('.nii.gz')]
+            subject = tio.Subject(
+                one_image=tio.ScalarImage(os.path.join(images_folder, f'{base_name}_0000.nii.gz')),
+                a_segmentation=tio.LabelMap(os.path.join(gt_labels_folder, f'{base_name}.nii.gz'))
+            )
+            subjects.append(subject)
+
+        val_ds = SubjectsDataset(subjects)
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
             batch_size *= torch.cuda.device_count()
 
-        val_dl = DataLoader(
-            val_ds,
-            batch_size=batch_size,
-            num_workers=self.cli_args.num_workers,
-            pin_memory=self.use_cuda,
-        )
+        batch_size = self.cli_args.batch_size
+        if self.use_cuda:
+            batch_size *= torch.cuda.device_count()
+
+        val_dl = DataLoader(val_ds, batch_size=4, num_workers=4)
 
         return val_dl
 
@@ -162,28 +197,32 @@ class LoesTrainingApp:
             self.val_writer.close()
 
 
-    def doTraining(self, epoch_ndx, train_dl):
+    def doTraining(self, epoch_ndx, training_loader):
         self.model.train()
         trnMetrics_g = torch.zeros(
             METRICS_SIZE,
-            len(train_dl.dataset),
+            len(training_loader.dataset),
             device=self.device,
         )
 
-        batch_iter = enumerateWithEstimate(
-            train_dl,
-            "E{} Training".format(epoch_ndx),
-            start_ndx=train_dl.num_workers,
-        )
-        for batch_ndx, batch_tup in batch_iter:
+        # Training epoch
+        batch_ndx = 0
+        for subjects_batch in training_loader:
+            inputs = subjects_batch['t1'][tio.DATA]
+            print('inputs:', inputs)
+            target = subjects_batch['age']
+            print('target:', target)
+
             self.optimizer.zero_grad()
 
+            batch_tup = (inputs, target)
             loss_var = self.computeBatchLoss(
                 batch_ndx,
                 batch_tup,
-                train_dl.batch_size,
+                training_loader.batch_size,
                 trnMetrics_g
             )
+            batch_ndx += 1
 
             loss_var.backward()
             self.optimizer.step()
@@ -195,7 +234,7 @@ class LoesTrainingApp:
             #         self.trn_writer.add_graph(model, batch_tup[0], verbose=True)
             #         self.trn_writer.close()
 
-        self.totalTrainingSamples_count += len(train_dl.dataset)
+        self.totalTrainingSamples_count += len(training_loader.dataset)
 
         return trnMetrics_g.to('cpu')
 
@@ -223,7 +262,7 @@ class LoesTrainingApp:
 
 
     def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
-        input_t, label_t, _series_list, _center_list = batch_tup
+        input_t, label_t = batch_tup
 
         input_g = input_t.to(self.device, non_blocking=True)
         label_g = label_t.to(self.device, non_blocking=True)
