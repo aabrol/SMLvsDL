@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 import nibabel as nib
 from models import AlexNet3D_Dropout
-from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_absolute_error, explained_variance_score, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_absolute_error, explained_variance_score, \
+    mean_squared_error, r2_score
 from dataclasses import dataclass
 from scipy.stats import pearsonr
 
@@ -54,10 +55,9 @@ class MRIDataset(Dataset):
 
 
 def readFrames(ssd, mode, tss, rep):
-
     # Read Data Frame
-    df = pd.read_csv(ssd + mode + '_' + str(tss) +
-                     '_rep_' + str(rep) + '.csv')
+    file_path = os.path.join(ssd, mode + '_' + str(tss) + '_rep_' + str(rep) + '.csv')
+    df = pd.read_csv(file_path)
 
     print('Mode ' + mode + ' :' + 'Size : ' +
           str(df.shape) + ' : DataFrames Read ...')
@@ -184,6 +184,7 @@ def generate_validation_model(cfg):
     epochs_no_improve = 0
     valid_acc = 0
 
+    criterion = None
     if cfg.cr == 'clx':
         criterion = nn.CrossEntropyLoss()
         reduce_on = 'max'
@@ -195,7 +196,8 @@ def generate_validation_model(cfg):
         reduce_on = 'min'
         m_val_acc = 100
         history = pd.DataFrame(columns=['scorename', 'iter', 'epoch', 'tr_mae', 'tr_ev', 'tr_mse',
-                                        'tr_r2', 'tr_r', 'tr_p', 'val_mae', 'val_ev', 'val_mse', 'val_r2', 'val_r', 'val_p', 'loss'])
+                                        'tr_r2', 'tr_r', 'tr_p', 'val_mae', 'val_ev', 'val_mse', 'val_r2', 'val_r',
+                                        'val_p', 'loss'])
     else:
         print('Check config flag cr')
 
@@ -343,11 +345,14 @@ def evaluate_test_accuracy(cfg):
 def loadData(cfg, mode):
 
     # Batch Dataloader
-    prefetch_factor = 8 # doesn't seem to be working; tried 1, 2, 4, 8, 16, 32 - mem used stays the same! need to verify the MRIdataset custom functionality maybe
+    # doesn't seem to be working; tried 1, 2, 4, 8, 16, 32 - mem used stays the same! need to verify the MRIdataset
+    # custom functionality maybe
+    prefetch_factor = 8
     dset = MRIDataset(cfg, mode)
 
     dloader = DataLoader(dset, batch_size=cfg.bs,
-                         shuffle=True, num_workers=cfg.nw, drop_last=True, pin_memory=True, prefetch_factor=prefetch_factor, persistent_workers=True)
+                         shuffle=True, num_workers=cfg.nw, drop_last=True, pin_memory=True,
+                         prefetch_factor=prefetch_factor, persistent_workers=True)
 
     return dloader
 
