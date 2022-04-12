@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv('../data/ABCD/ABCD.csv')
+df = pd.read_csv('../data/ABCD/qc_with_paths.csv')
 
 n = 84
 tr_smp_sizes = [42]

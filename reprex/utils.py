@@ -378,10 +378,8 @@ def updateIterML(cfg):
         str(cfg.lr)+'_espat_'+str(cfg.es_pat)+'/'
 
     # Make Model Directory
-    try:
-        os.stat(cfg.ml)
-    except:
-        os.mkdir(cfg.ml)
+    if not os.path.isdir(cfg.ml):
+        os.makedirs(cfg.ml)
 
     return cfg
 
