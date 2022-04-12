@@ -403,6 +403,7 @@ def slurmTaskIDMapper(cfg):
 def initializeNet(cfg):
 
     # Initialize net based on model type (mt, nc)
+    net = None
     if cfg.mt == 'AlexNet3D_Dropout':
         net = AlexNet3D_Dropout(num_classes=cfg.nc)
     else:

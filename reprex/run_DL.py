@@ -27,8 +27,8 @@ if __name__ == '__main__':
                         help='patience for early stopping (default: 20)')
     parser.add_argument('--ml', default='./temp/', metavar='S',
                         help='model location (default: ./temp/)')
-    parser.add_argument('--mt', default='AlexNet3D', metavar='S',
-                        help='modeltype (default: AlexNet3D)')
+    parser.add_argument('--mt', default='AlexNet3D_Dropout', metavar='S',
+                        help='modeltype (default: AlexNet3D_Dropout)')
     parser.add_argument('--ssd', default='/SampleSplits/', metavar='S',
                         help='sample size directory (default: /SampleSplits/)')
     parser.add_argument('--scorename', default='age', metavar='S',
