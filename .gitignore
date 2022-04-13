@@ -4,3 +4,9 @@
 /results/
 /dcan/runs/
 /dcan/.ipynb_checkpoints/
+/reprex/SampleSplits_MMSE/
+/reprex/alex_net-*.err
+/reprex/alex_net-*.out
+/data/ABCD/
+/dcan/data-unversioned/cache/
+/inspection/

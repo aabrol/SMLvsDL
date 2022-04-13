@@ -233,7 +233,7 @@ def readFrames(iter_,tr_smp_sizes,nReps,mode,ssd):
     if mode == 'tr':
         df = pd.read_csv(os.path.join(ssd, 'tr_' + str(tss) + '_rep_' + str(rep) + '.csv'))
     elif mode == 'va':    
-        df = pd.read_csv(ssd + 'va_' + str(tss) + '_rep_' + str(rep) + '.csv')
+        df = pd.read_csv(os.path.join(ssd, 'va_' + str(tss) + '_rep_' + str(rep) + '.csv'))
     elif mode == 'te':
         df = pd.read_csv(ssd + 'te_' + str(tss) + '_rep_' + str(rep) + '.csv')
     else:
