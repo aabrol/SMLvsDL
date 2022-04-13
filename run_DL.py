@@ -5,6 +5,8 @@ import utils as ut
 import torch
 import argparse
 import time
+import numpy as np
+
 
 parser = argparse.ArgumentParser(description='SLvsML')
 parser.add_argument('--nc', type=int, default=10,metavar='N',
