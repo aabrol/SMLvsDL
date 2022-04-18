@@ -12,10 +12,10 @@ import torch.nn as nn
 from torch.optim import SGD, Adam
 from torch.utils.data import DataLoader
 
+from dcan.dsets import ABCDDataset
+from dcan.model import ABCDModel
 from util.util import enumerateWithEstimate
-from p2ch10.dsets import LunaDataset
 from util.logconf import logging
-from p2ch11.model import LunaModel
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
@@ -74,7 +74,7 @@ class LunaTrainingApp:
         self.optimizer = self.initOptimizer()
 
     def initModel(self):
-        model = LunaModel()
+        model = ABCDModel()
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
@@ -87,7 +87,7 @@ class LunaTrainingApp:
         # return Adam(self.model.parameters())
 
     def initTrainDl(self):
-        train_ds = LunaDataset(
+        train_ds = ABCDDataset(
             val_stride=10,
             isValSet_bool=False,
         )
@@ -106,7 +106,7 @@ class LunaTrainingApp:
         return train_dl
 
     def initValDl(self):
-        val_ds = LunaDataset(
+        val_ds = ABCDDataset(
             val_stride=10,
             isValSet_bool=True,
         )

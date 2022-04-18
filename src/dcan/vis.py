@@ -4,12 +4,12 @@ matplotlib.use('nbagg')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from dcan.dsets import Ct, LunaDataset
+from dcan.dsets import Mri, ABCDDataset
 
 clim=(-1000.0, 300)
 
 def findPositiveSamples(start_ndx=0, limit=100):
-    ds = LunaDataset(sortby_str='label_and_size')
+    ds = ABCDDataset(sortby_str='label_and_size')
 
     positiveSample_list = []
     for sample_tup in ds.candidateInfo_list:
@@ -23,7 +23,7 @@ def findPositiveSamples(start_ndx=0, limit=100):
     return positiveSample_list
 
 def showCandidate(series_uid, batch_ndx=None, **kwargs):
-    ds = LunaDataset(series_uid=series_uid, **kwargs)
+    ds = ABCDDataset(series_uid=series_uid, **kwargs)
     pos_list = [i for i, x in enumerate(ds.candidateInfo_list) if x.isNodule_bool]
 
     if batch_ndx is None:
@@ -33,7 +33,7 @@ def showCandidate(series_uid, batch_ndx=None, **kwargs):
             print("Warning: no positive samples found; using first negative sample.")
             batch_ndx = 0
 
-    ct = Ct(series_uid)
+    ct = Mri(series_uid)
     ct_t, pos_t, series_uid, center_irc = ds[batch_ndx]
     ct_a = ct_t[0].numpy()
 

@@ -4,16 +4,13 @@ import functools
 import glob
 import os
 import random
-
 from collections import namedtuple
 
-import SimpleITK as sitk
+import nibabel as nib
 import numpy as np
-
 import torch
 import torch.cuda
 from torch.utils.data import Dataset
-import nibabel as nib
 
 from util.disk import getCache
 from util.logconf import logging
