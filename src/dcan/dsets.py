@@ -151,7 +151,7 @@ class ABCDDataset(Dataset):
         candidate_t = candidate_t.unsqueeze(0)
 
         age_t = torch.tensor([
-                not candidateInfo_tup.age_int
+                candidateInfo_tup.age_int
             ],
             dtype=torch.int
         )
