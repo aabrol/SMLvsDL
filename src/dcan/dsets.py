@@ -33,26 +33,26 @@ def getCandidateInfoList(requireOnDisk_bool=True):
     # This will let us use the data, even if we haven't downloaded all of
     # the subsets yet.
     mri_list = glob.glob('data-unversioned/abcd/*.nii.gz')
-    presentOnDisk_set = {os.path.split(p)[-1][:-6] for p in mri_list}
+    presentOnDisk_set = {os.path.split(p)[-1][:-7] for p in mri_list}
 
     candidateInfo_list = []
-    with open('data/qc_with_paths.csv', "r") as f:
+    with open('data/ABCD/qc_with_paths.csv', "r") as f:
         for row in list(csv.reader(f))[1:]:
-            eid_ses_t1_t2_run_x_try_uid = '_'.join([row[0], row[1], row[4], row[5]])
+            eid_ses_t1_t2_run_x_try_uid = '_'.join([row[0], row[1], 'run-' + row[5].zfill(3), row[4].upper() + 'w'])
 
             if eid_ses_t1_t2_run_x_try_uid not in presentOnDisk_set and requireOnDisk_bool:
                 continue
 
-            eid_str = row[1]
-            ses_str = row[2]
-            age_int = int(row[3])
-            sex_str = row[4]
-            t1_t2_str = row[5]
-            run_x_try_int = int(row[6])
-            smriPath_str = row[7]
-            motionQCscore_int = int(row[8])
-            passfail_str = row[9]
-            notes_str = row[10]
+            eid_str = row[0]
+            ses_str = row[1]
+            age_int = int(row[2])
+            sex_str = row[3]
+            t1_t2_str = row[4]
+            run_x_try_int = int(row[5])
+            smriPath_str = row[6]
+            motionQCscore_int = int(row[7])
+            passfail_str = row[8]
+            notes_str = row[9]
 
             candidateInfo_list.append(CandidateInfoTuple(
                 eid_ses_t1_t2_run_x_try_uid,
@@ -74,7 +74,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
 class Mri:
     def __init__(self, smri_path):
         mri_path = glob.glob(
-            'data-unversioned/{}'.format(smri_path)
+            'data-unversioned/abcd/{}.nii.gz'.format(smri_path)
         )[0]
 
         mri_nii_gz = nib.load(mri_path)
@@ -95,7 +95,7 @@ def getMri(series_uid):
 
 
 @raw_cache.memoize(typed=True)
-def getCtRawCandidate(series_uid, center_xyz, width_irc):
+def getMriRawCandidate(series_uid):
     mri = getMri(series_uid)
     mri_chunk = mri.getRawCandidate()
     return mri_chunk
@@ -144,7 +144,7 @@ class ABCDDataset(Dataset):
     def __getitem__(self, ndx):
         candidateInfo_tup = self.candidateInfo_list[ndx]
 
-        candidate_a = getCtRawCandidate(
+        candidate_a = getMriRawCandidate(
             candidateInfo_tup.series_uid,
         )
         candidate_t = torch.from_numpy(candidate_a).to(torch.float32)
