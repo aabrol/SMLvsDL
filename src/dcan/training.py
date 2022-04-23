@@ -28,7 +28,7 @@ METRICS_PRED_NDX=1
 METRICS_LOSS_NDX=2
 METRICS_SIZE = 3
 
-class LunaTrainingApp:
+class ABCDTrainingApp:
     def __init__(self, sys_argv=None):
         if sys_argv is None:
             sys_argv = sys.argv[1:]
@@ -223,7 +223,7 @@ class LunaTrainingApp:
 
 
     def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
-        input_t, label_t, _series_list, _center_list = batch_tup
+        input_t, label_t, _series_list = batch_tup
 
         input_g = input_t.to(self.device, non_blocking=True)
         label_g = label_t.to(self.device, non_blocking=True)
@@ -384,4 +384,4 @@ class LunaTrainingApp:
 
 
 if __name__ == '__main__':
-    LunaTrainingApp().main()
+    ABCDTrainingApp().main()

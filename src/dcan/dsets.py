@@ -78,7 +78,7 @@ class Mri:
         )[0]
 
         mri_nii_gz = nib.load(mri_path)
-        mri_a = np.array(mri_nii_gz.get_fdata(), dtype=np.float32)
+        mri_a = np.array(mri_nii_gz.get_fdata().copy(), dtype=np.float32)
 
         self.smri_path = smri_path
         self.hu_a = mri_a

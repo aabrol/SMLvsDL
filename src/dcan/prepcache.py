@@ -9,7 +9,7 @@ from torch.optim import SGD
 from torch.utils.data import DataLoader
 
 from util.util import enumerateWithEstimate
-from .dsets import ABCDDataset
+from dcan.dsets import ABCDDataset
 from util.logconf import logging
 from .model import ABCDModel
 
@@ -19,7 +19,7 @@ log.setLevel(logging.INFO)
 # log.setLevel(logging.DEBUG)
 
 
-class LunaPrepCacheApp:
+class ABCDPrepCacheApp:
     @classmethod
     def __init__(self, sys_argv=None):
         if sys_argv is None:
@@ -60,4 +60,4 @@ class LunaPrepCacheApp:
 
 
 if __name__ == '__main__':
-    LunaPrepCacheApp().main()
+    ABCDPrepCacheApp().main()
