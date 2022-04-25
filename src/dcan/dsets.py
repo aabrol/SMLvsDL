@@ -24,7 +24,7 @@ raw_cache = getCache('dcan_raw')
 
 CandidateInfoTuple = namedtuple(
     'CandidateInfoTuple',
-    'series_uid, eid_str, ses_str, age_int, sex_str, t1_t2_str, run_x_try_int, smriPath_str, motionQCscore_int, passfail_str, notes_str'
+    'series_uid, eid_str, ses_str, age_int, sex_str, t1_t2_str, run_x_try_int, smriPath_str, motionQCscore_int, passfail_str, notes_str, is_male_bool'
 )
 
 @functools.lru_cache(1)
@@ -53,6 +53,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
             motionQCscore_int = int(row[7])
             passfail_str = row[8]
             notes_str = row[9]
+            is_male_bool = (sex_str == 'M')
 
             candidateInfo_list.append(CandidateInfoTuple(
                 eid_ses_t1_t2_run_x_try_uid,
@@ -66,6 +67,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
                 motionQCscore_int,
                 passfail_str,
                 notes_str,
+                is_male_bool,
             ))
 
     candidateInfo_list.sort(reverse=True)
@@ -151,9 +153,10 @@ class ABCDDataset(Dataset):
         candidate_t = candidate_t.unsqueeze(0)
 
         age_t = torch.tensor([
-                candidateInfo_tup.age_int
+                not candidateInfo_tup.is_male_bool,
+                candidateInfo_tup.is_male_bool
             ],
-            dtype=torch.int
+            dtype=torch.long
         )
 
         return candidate_t, age_t, candidateInfo_tup.series_uid
