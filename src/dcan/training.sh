@@ -15,8 +15,7 @@
 
 #SBATCH -A miran045
 
-rm -f alex-net-training-*.* || true
 rm -r /home/miran045/reine097/projects/AlexNet_Abrol2021/data-unversioned/cache
 cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src"
-/home/miran045/reine097/projects/AlexNet_Abrol2021/venv/bin/python /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py
+/home/miran045/reine097/projects/AlexNet_Abrol2021/venv/bin/python /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers 1 --batch-size=1
