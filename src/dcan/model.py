@@ -87,3 +87,8 @@ class ABCDBlock(nn.Module):
         block_out = self.relu2(block_out)
 
         return self.maxpool(block_out)
+
+
+if __name__ == '__main__':
+    model = ABCDModel()
+    print(model)
