@@ -53,7 +53,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
             motionQCscore_int = int(row[7])
             passfail_str = row[8]
             notes_str = row[9]
-            is_male_bool = (sex_str == 'M')
+            is_male_bool = (sex_str == 'Male')
 
             candidateInfo_list.append(CandidateInfoTuple(
                 eid_ses_t1_t2_run_x_try_uid,
