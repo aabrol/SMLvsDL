@@ -152,11 +152,11 @@ class ABCDDataset(Dataset):
         candidate_t = torch.from_numpy(candidate_a).to(torch.float32)
         candidate_t = candidate_t.unsqueeze(0)
 
-        age_t = torch.tensor([
+        is_male_t = torch.tensor([
                 not candidateInfo_tup.is_male_bool,
                 candidateInfo_tup.is_male_bool
             ],
             dtype=torch.long
         )
 
-        return candidate_t, age_t, candidateInfo_tup.series_uid
+        return candidate_t, is_male_t, candidateInfo_tup.series_uid
