@@ -18,4 +18,4 @@
 rm -r /home/miran045/reine097/projects/AlexNet_Abrol2021/data-unversioned/cache
 cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src"
-/home/miran045/reine097/projects/AlexNet_Abrol2021/venv/bin/python /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers 1 --batch-size=1
+/home/miran045/reine097/projects/AlexNet_Abrol2021/venv/bin/python /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers 1 --batch-size=1 --tb-prefix=age_regression "dcan"

@@ -21,9 +21,7 @@ class ABCDModel(nn.Module):
         self.block3 = ABCDBlock(conv_channels * 2, conv_channels * 4)
         self.block4 = ABCDBlock(conv_channels * 4, conv_channels * 8)
 
-        # self.head_linear = nn.Linear(1152, 2)
-        self.head_linear = nn.Linear(299520, 2)
-        self.head_softmax = nn.Softmax(dim=1)
+        self.head_linear = nn.Linear(299520, 1)
 
         self._init_weights()
 
@@ -62,7 +60,7 @@ class ABCDModel(nn.Module):
         )
         linear_output = self.head_linear(conv_flat)
 
-        return linear_output, self.head_softmax(linear_output)
+        return linear_output
 
 
 class ABCDBlock(nn.Module):

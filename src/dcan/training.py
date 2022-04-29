@@ -83,8 +83,8 @@ class ABCDTrainingApp:
         return model
 
     def initOptimizer(self):
-        return SGD(self.model.parameters(), lr=0.001, momentum=0.99)
-        # return Adam(self.model.parameters())
+        # return SGD(self.model.parameters(), lr=0.001, momentum=0.99)
+        return Adam(self.model.parameters())
 
     def initTrainDl(self):
         train_ds = ABCDDataset(
@@ -228,22 +228,22 @@ class ABCDTrainingApp:
         input_g = input_t.to(self.device, non_blocking=True)
         label_g = label_t.to(self.device, non_blocking=True)
 
-        logits_g, probability_g = self.model(input_g)
+        logits_g = self.model(input_g)
 
-        loss_func = nn.CrossEntropyLoss(reduction='none')
+        loss_func = nn.L1Loss()
         loss_g = loss_func(
+            label_g.unsqueeze(1),
             logits_g,
-            label_g[:,1],
         )
         start_ndx = batch_ndx * batch_size
         end_ndx = start_ndx + label_t.size(0)
 
         metrics_g[METRICS_LABEL_NDX, start_ndx:end_ndx] = \
-            label_g[:,1].detach()
+            label_g[0]
         metrics_g[METRICS_PRED_NDX, start_ndx:end_ndx] = \
-            probability_g[:,1].detach()
+            logits_g[0].detach()
         metrics_g[METRICS_LOSS_NDX, start_ndx:end_ndx] = \
-            loss_g.detach()
+            loss_g
 
         return loss_g.mean()
 
