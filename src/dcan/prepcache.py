@@ -9,7 +9,7 @@ from torch.optim import SGD
 from torch.utils.data import DataLoader
 
 from util.util import enumerateWithEstimate
-from dcan.dsets import ABCDDataset
+from dcan.dsets import InfantMRIDataset
 from util.logconf import logging
 from .model import ABCDModel
 
@@ -43,7 +43,7 @@ class ABCDPrepCacheApp:
         log.info("Starting {}, {}".format(type(self).__name__, self.cli_args))
 
         self.prep_dl = DataLoader(
-            ABCDDataset(
+            InfantMRIDataset(
                 sortby_str='series_uid',
             ),
             batch_size=self.cli_args.batch_size,

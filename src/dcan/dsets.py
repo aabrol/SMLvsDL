@@ -103,7 +103,7 @@ def getMriRawCandidate(series_uid):
     return mri_chunk
 
 
-class ABCDDataset(Dataset):
+class InfantMRIDataset(Dataset):
     def __init__(self,
                  val_stride=0,
                  isValSet_bool=None,

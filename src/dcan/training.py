@@ -3,19 +3,16 @@ import datetime
 import os
 import sys
 
-import numpy as np
-
-from torch.utils.tensorboard import SummaryWriter
-
 import torch
 import torch.nn as nn
-from torch.optim import SGD, Adam
+from torch.optim import Adam
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
-from dcan.dsets import ABCDDataset
+from dcan.dsets import InfantMRIDataset
 from dcan.model import ABCDModel
-from util.util import enumerateWithEstimate
 from util.logconf import logging
+from util.util import enumerateWithEstimate
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
@@ -28,7 +25,7 @@ METRICS_PRED_NDX=1
 METRICS_LOSS_NDX=2
 METRICS_SIZE = 3
 
-class ABCDTrainingApp:
+class InfantMRITrainingApp:
     def __init__(self, sys_argv=None):
         if sys_argv is None:
             sys_argv = sys.argv[1:]
@@ -87,7 +84,7 @@ class ABCDTrainingApp:
         return Adam(self.model.parameters())
 
     def initTrainDl(self):
-        train_ds = ABCDDataset(
+        train_ds = InfantMRIDataset(
             val_stride=10,
             isValSet_bool=False,
         )
@@ -106,7 +103,7 @@ class ABCDTrainingApp:
         return train_dl
 
     def initValDl(self):
-        val_ds = ABCDDataset(
+        val_ds = InfantMRIDataset(
             val_stride=10,
             isValSet_bool=True,
         )
@@ -157,12 +154,9 @@ class ABCDTrainingApp:
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
             self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
-        if hasattr(self, 'trn_writer'):
-            self.trn_writer.close()
-            self.val_writer.close()
-
 
     def doTraining(self, epoch_ndx, train_dl):
+        log.info(f"Entering doTraining({epoch_ndx}, {train_dl}).")
         self.model.train()
         trnMetrics_g = torch.zeros(
             METRICS_SIZE,
@@ -196,11 +190,13 @@ class ABCDTrainingApp:
             #         self.trn_writer.close()
 
         self.totalTrainingSamples_count += len(train_dl.dataset)
+        log.info(f"Exiting doTraining().")
 
         return trnMetrics_g.to('cpu')
 
 
     def doValidation(self, epoch_ndx, val_dl):
+        log.info(f"Entering doValidation({epoch_ndx}, {val_dl}).")
         with torch.no_grad():
             self.model.eval()
             valMetrics_g = torch.zeros(
@@ -214,12 +210,19 @@ class ABCDTrainingApp:
                 "E{} Validation ".format(epoch_ndx),
                 start_ndx=val_dl.num_workers,
             )
+            batch_count = 0
+            total_loss = 0.0
             for batch_ndx, batch_tup in batch_iter:
-                self.computeBatchLoss(
+                mean_loss = self.computeBatchLoss(
                     batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g)
+                log.info(f'batch_validation_loss: {mean_loss}')
+                batch_count += len(batch_tup)
+                total_loss += mean_loss
+            total_validation_loss = total_loss / (float(batch_count))
+            log.info(f'total_validation_loss: {total_validation_loss}')
+        log.info(f"Exiting doValidation({epoch_ndx}, {val_dl}).")
 
         return valMetrics_g.to('cpu')
-
 
 
     def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
@@ -253,102 +256,12 @@ class ABCDTrainingApp:
             epoch_ndx,
             mode_str,
             metrics_t,
-            classificationThreshold=0.5,
     ):
-        self.initTensorboardWriters()
+        # TODO Add tensor board writers.
         log.info("E{} {}".format(
             epoch_ndx,
             type(self).__name__,
         ))
-
-        negLabel_mask = metrics_t[METRICS_LABEL_NDX] <= classificationThreshold
-        negPred_mask = metrics_t[METRICS_PRED_NDX] <= classificationThreshold
-
-        posLabel_mask = ~negLabel_mask
-        posPred_mask = ~negPred_mask
-
-        neg_count = int(negLabel_mask.sum())
-        pos_count = int(posLabel_mask.sum())
-
-        neg_correct = int((negLabel_mask & negPred_mask).sum())
-        pos_correct = int((posLabel_mask & posPred_mask).sum())
-
-        metrics_dict = {}
-        metrics_dict['loss/all'] = \
-            metrics_t[METRICS_LOSS_NDX].mean()
-        metrics_dict['loss/neg'] = \
-            metrics_t[METRICS_LOSS_NDX, negLabel_mask].mean()
-        metrics_dict['loss/pos'] = \
-            metrics_t[METRICS_LOSS_NDX, posLabel_mask].mean()
-
-        metrics_dict['correct/all'] = (pos_correct + neg_correct) \
-            / np.float32(metrics_t.shape[1]) * 100
-        metrics_dict['correct/neg'] = neg_correct / np.float32(neg_count) * 100
-        metrics_dict['correct/pos'] = pos_correct / np.float32(pos_count) * 100
-
-        log.info(
-            ("E{} {:8} {loss/all:.4f} loss, "
-                 + "{correct/all:-5.1f}% correct, "
-            ).format(
-                epoch_ndx,
-                mode_str,
-                **metrics_dict,
-            )
-        )
-        log.info(
-            ("E{} {:8} {loss/neg:.4f} loss, "
-                 + "{correct/neg:-5.1f}% correct ({neg_correct:} of {neg_count:})"
-            ).format(
-                epoch_ndx,
-                mode_str + '_neg',
-                neg_correct=neg_correct,
-                neg_count=neg_count,
-                **metrics_dict,
-            )
-        )
-        log.info(
-            ("E{} {:8} {loss/pos:.4f} loss, "
-                 + "{correct/pos:-5.1f}% correct ({pos_correct:} of {pos_count:})"
-            ).format(
-                epoch_ndx,
-                mode_str + '_pos',
-                pos_correct=pos_correct,
-                pos_count=pos_count,
-                **metrics_dict,
-            )
-        )
-
-        writer = getattr(self, mode_str + '_writer')
-
-        for key, value in metrics_dict.items():
-            writer.add_scalar(key, value, self.totalTrainingSamples_count)
-
-        writer.add_pr_curve(
-            'pr',
-            metrics_t[METRICS_LABEL_NDX],
-            metrics_t[METRICS_PRED_NDX],
-            self.totalTrainingSamples_count,
-        )
-
-        bins = [x/50.0 for x in range(51)]
-
-        negHist_mask = negLabel_mask & (metrics_t[METRICS_PRED_NDX] > 0.01)
-        posHist_mask = posLabel_mask & (metrics_t[METRICS_PRED_NDX] < 0.99)
-
-        if negHist_mask.any():
-            writer.add_histogram(
-                'is_neg',
-                metrics_t[METRICS_PRED_NDX, negHist_mask],
-                self.totalTrainingSamples_count,
-                bins=bins,
-            )
-        if posHist_mask.any():
-            writer.add_histogram(
-                'is_pos',
-                metrics_t[METRICS_PRED_NDX, posHist_mask],
-                self.totalTrainingSamples_count,
-                bins=bins,
-            )
 
         # score = 1 \
         #     + metrics_dict['pr/f1_score'] \
@@ -384,4 +297,4 @@ class ABCDTrainingApp:
 
 
 if __name__ == '__main__':
-    ABCDTrainingApp().main()
+    InfantMRITrainingApp().main()

@@ -4,12 +4,12 @@ matplotlib.use('nbagg')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from dcan.dsets import Mri, ABCDDataset
+from dcan.dsets import Mri, InfantMRIDataset
 
 clim=(-1000.0, 300)
 
 def findPositiveSamples(start_ndx=0, limit=100):
-    ds = ABCDDataset(sortby_str='label_and_size')
+    ds = InfantMRIDataset(sortby_str='label_and_size')
 
     positiveSample_list = []
     for sample_tup in ds.candidateInfo_list:
@@ -23,7 +23,7 @@ def findPositiveSamples(start_ndx=0, limit=100):
     return positiveSample_list
 
 def showCandidate(series_uid, batch_ndx=None, **kwargs):
-    ds = ABCDDataset(series_uid=series_uid, **kwargs)
+    ds = InfantMRIDataset(series_uid=series_uid, **kwargs)
     pos_list = [i for i, x in enumerate(ds.candidateInfo_list) if x.isNodule_bool]
 
     if batch_ndx is None:
