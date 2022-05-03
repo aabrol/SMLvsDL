@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import math
 import os
 import sys
 
@@ -20,10 +21,11 @@ log.setLevel(logging.INFO)
 log.setLevel(logging.DEBUG)
 
 # Used for computeBatchLoss and logMetrics to index into metrics_t/metrics_a
-METRICS_LABEL_NDX=0
-METRICS_PRED_NDX=1
-METRICS_LOSS_NDX=2
+METRICS_LABEL_NDX = 0
+METRICS_PRED_NDX = 1
+METRICS_LOSS_NDX = 2
 METRICS_SIZE = 3
+
 
 class InfantMRITrainingApp:
     def __init__(self, sys_argv=None):
@@ -32,31 +34,31 @@ class InfantMRITrainingApp:
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--num-workers',
-            help='Number of worker processes for background data loading',
-            default=8,
-            type=int,
-        )
+                            help='Number of worker processes for background data loading',
+                            default=8,
+                            type=int,
+                            )
         parser.add_argument('--batch-size',
-            help='Batch size to use for training',
-            default=32,
-            type=int,
-        )
+                            help='Batch size to use for training',
+                            default=32,
+                            type=int,
+                            )
         parser.add_argument('--epochs',
-            help='Number of epochs to train for',
-            default=1,
-            type=int,
-        )
+                            help='Number of epochs to train for',
+                            default=1,
+                            type=int,
+                            )
 
         parser.add_argument('--tb-prefix',
-            default='p2ch11',
-            help="Data prefix to use for Tensorboard run. Defaults to chapter.",
-        )
+                            default='p2ch11',
+                            help="Data prefix to use for Tensorboard run. Defaults to chapter.",
+                            )
 
         parser.add_argument('comment',
-            help="Comment suffix for Tensorboard run.",
-            nargs='?',
-            default='dwlpt',
-        )
+                            help="Comment suffix for Tensorboard run.",
+                            nargs='?',
+                            default='dwlpt',
+                            )
         self.cli_args = parser.parse_args(sys_argv)
         self.time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
 
@@ -130,7 +132,6 @@ class InfantMRITrainingApp:
             self.val_writer = SummaryWriter(
                 log_dir=log_dir + '-val_cls-' + self.cli_args.comment)
 
-
     def main(self):
         log.info("Starting {}, {}".format(type(self).__name__, self.cli_args))
 
@@ -138,7 +139,6 @@ class InfantMRITrainingApp:
         val_dl = self.initValDl()
 
         for epoch_ndx in range(1, self.cli_args.epochs + 1):
-
             log.info("Epoch {} of {}, {}/{} batches of size {}*{}".format(
                 epoch_ndx,
                 self.cli_args.epochs,
@@ -154,9 +154,10 @@ class InfantMRITrainingApp:
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
             self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
+            rmse = self.get_rmse(val_dl)
+            log.info(f'Epoch {epoch_ndx}: validation rmse: {rmse}')
 
     def doTraining(self, epoch_ndx, train_dl):
-        log.info(f"Entering doTraining({epoch_ndx}, {train_dl}).")
         self.model.train()
         trnMetrics_g = torch.zeros(
             METRICS_SIZE,
@@ -190,13 +191,10 @@ class InfantMRITrainingApp:
             #         self.trn_writer.close()
 
         self.totalTrainingSamples_count += len(train_dl.dataset)
-        log.info(f"Exiting doTraining().")
 
         return trnMetrics_g.to('cpu')
 
-
     def doValidation(self, epoch_ndx, val_dl):
-        log.info(f"Entering doValidation({epoch_ndx}, {val_dl}).")
         with torch.no_grad():
             self.model.eval()
             valMetrics_g = torch.zeros(
@@ -215,15 +213,31 @@ class InfantMRITrainingApp:
             for batch_ndx, batch_tup in batch_iter:
                 mean_loss = self.computeBatchLoss(
                     batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g)
-                log.info(f'batch_validation_loss: {mean_loss}')
-                batch_count += len(batch_tup)
+                batch_count += len(batch_tup[0])
                 total_loss += mean_loss
             total_validation_loss = total_loss / (float(batch_count))
             log.info(f'total_validation_loss: {total_validation_loss}')
-        log.info(f"Exiting doValidation({epoch_ndx}, {val_dl}).")
 
         return valMetrics_g.to('cpu')
 
+    def get_rmse(self, val_dl):
+        with torch.no_grad():
+            self.model.eval()
+
+            batch_iter = enumerateWithEstimate(
+                val_dl,
+                "Validation-RMSE ",
+                start_ndx=val_dl.num_workers,
+            )
+            n = 0
+            total_squared_error = 0.0
+            for batch_ndx, batch_tup in batch_iter:
+                mean_loss = self.compute_batch_squared_error(batch_tup)
+                n += len(batch_tup[0])
+                total_squared_error += mean_loss
+            rmse = math.sqrt(total_squared_error / n)
+
+        return rmse
 
     def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
         input_t, label_t, _series_list = batch_tup
@@ -250,6 +264,17 @@ class InfantMRITrainingApp:
 
         return loss_g.mean()
 
+    def compute_batch_squared_error(self, batch_tup):
+        input_t, label_t, _ = batch_tup
+
+        input_g = input_t.to(self.device, non_blocking=True)
+        expected_value_g = label_t.to(self.device, non_blocking=True)
+
+        actual_value_g = self.model(input_g)
+
+        squared_error_sum = sum([(expected_value_g[i] - actual_value_g[i]) ** 2 for i in range(len(input_g))])
+
+        return squared_error_sum
 
     def logMetrics(
             self,
