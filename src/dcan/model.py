@@ -10,16 +10,16 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class ABCDModel(nn.Module):
+class LUNAModel(nn.Module):
     def __init__(self, in_channels=1, conv_channels=8):
         super().__init__()
 
         self.tail_batchnorm = nn.BatchNorm3d(1)
 
-        self.block1 = ABCDBlock(in_channels, conv_channels)
-        self.block2 = ABCDBlock(conv_channels, conv_channels * 2)
-        self.block3 = ABCDBlock(conv_channels * 2, conv_channels * 4)
-        self.block4 = ABCDBlock(conv_channels * 4, conv_channels * 8)
+        self.block1 = LUNABlock(in_channels, conv_channels)
+        self.block2 = LUNABlock(conv_channels, conv_channels * 2)
+        self.block3 = LUNABlock(conv_channels * 2, conv_channels * 4)
+        self.block4 = LUNABlock(conv_channels * 4, conv_channels * 8)
 
         self.head_linear = nn.Linear(299520, 1)
 
@@ -63,7 +63,7 @@ class ABCDModel(nn.Module):
         return linear_output
 
 
-class ABCDBlock(nn.Module):
+class LUNABlock(nn.Module):
     def __init__(self, in_channels, conv_channels):
         super().__init__()
 
@@ -88,5 +88,5 @@ class ABCDBlock(nn.Module):
 
 
 if __name__ == '__main__':
-    model = ABCDModel()
+    model = LUNAModel()
     print(model)

@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from util.util import enumerateWithEstimate
 from dcan.dsets import InfantMRIDataset
 from util.logconf import logging
-from .model import ABCDModel
+from .model import LUNAModel
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)

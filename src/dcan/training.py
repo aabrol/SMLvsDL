@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 from dcan.dsets import InfantMRIDataset
-from dcan.model import ABCDModel
+from dcan.model import LUNAModel
 from util.logconf import logging
 from util.util import enumerateWithEstimate
 
@@ -73,7 +73,7 @@ class InfantMRITrainingApp:
         self.optimizer = self.initOptimizer()
 
     def initModel(self):
-        model = ABCDModel()
+        model = LUNAModel()
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
