@@ -68,11 +68,11 @@ class LunaBlock(nn.Module):
         super().__init__()
 
         self.conv1 = nn.Conv3d(
-            in_channels, conv_channels, kernel_size=3, padding=1, bias=True,
+            in_channels, conv_channels, kernel_size=(3, 3, 3), padding=1, bias=True,
         )
         self.relu1 = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv3d(
-            conv_channels, conv_channels, kernel_size=3, padding=1, bias=True,
+            conv_channels, conv_channels, kernel_size=(3, 3, 3), padding=1, bias=True,
         )
         self.relu2 = nn.ReLU(inplace=True)
 
