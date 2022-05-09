@@ -156,6 +156,7 @@ class InfantMRITrainingApp:
         val_dl = self.initValDl()
 
         for epoch_ndx in range(1, self.cli_args.epochs + 1):
+
             log.info("Epoch {} of {}, {}/{} batches of size {}*{}".format(
                 epoch_ndx,
                 self.cli_args.epochs,
@@ -168,14 +169,13 @@ class InfantMRITrainingApp:
             trnMetrics_t = self.doTraining(epoch_ndx, train_dl)
             self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
 
-            rmse = self.get_rmse(train_dl)
-            log.info(f'Epoch {epoch_ndx}: training rmse: {rmse}')
-
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
             self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
-            rmse = self.get_rmse(val_dl)
-            log.info(f'Epoch {epoch_ndx}: validation rmse: {rmse}')
+        if hasattr(self, 'trn_writer'):
+            self.trn_writer.close()
+            self.val_writer.close()
+
 
     def doTraining(self, epoch_ndx, train_dl):
         self.model.train()
@@ -190,7 +190,6 @@ class InfantMRITrainingApp:
             "E{} Training".format(epoch_ndx),
             start_ndx=train_dl.num_workers,
         )
-        loss_f = 0.0
         for batch_ndx, batch_tup in batch_iter:
             self.optimizer.zero_grad()
 
@@ -200,9 +199,6 @@ class InfantMRITrainingApp:
                 train_dl.batch_size,
                 trnMetrics_g
             )
-
-            with torch.no_grad():
-                loss_f += float(loss_var.detach())
 
             loss_var.backward()
             self.optimizer.step()
@@ -215,9 +211,9 @@ class InfantMRITrainingApp:
             #         self.trn_writer.close()
 
         self.totalTrainingSamples_count += len(train_dl.dataset)
-        log.info(f'Epoch {epoch_ndx}: training loss: {loss_f}')
 
         return trnMetrics_g.to('cpu')
+
 
     def doValidation(self, epoch_ndx, val_dl):
         with torch.no_grad():
@@ -233,15 +229,9 @@ class InfantMRITrainingApp:
                 "E{} Validation ".format(epoch_ndx),
                 start_ndx=val_dl.num_workers,
             )
-            batch_count = 0
-            total_loss = 0.0
             for batch_ndx, batch_tup in batch_iter:
-                mean_loss = self.computeBatchLoss(
+                self.computeBatchLoss(
                     batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g)
-                batch_count += len(batch_tup[0])
-                total_loss += mean_loss
-            total_validation_loss = total_loss / (float(batch_count))
-            log.info(f'total_validation_loss: {total_validation_loss}')
 
         return valMetrics_g.to('cpu')
 
