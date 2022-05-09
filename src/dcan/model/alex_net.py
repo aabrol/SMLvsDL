@@ -26,17 +26,17 @@ class AlexNet(nn.Module):
 
         self.s4 = nn.MaxPool3d(kernel_size=3, stride=2, padding='valid')
 
-        self.c5 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        self.relu3 = nn.ReLU(inplace=True)
+        # self.c5 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        # self.relu3 = nn.ReLU(inplace=True)
+        #
+        # self.c6 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        # self.relu4 = nn.ReLU(inplace=True)
+        #
+        # self.c7 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        # self.relu5 = nn.ReLU(inplace=True)
 
-        self.c6 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        self.relu4 = nn.ReLU(inplace=True)
-
-        self.c7 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        self.relu5 = nn.ReLU(inplace=True)
-
-        self.f8 = nn.Linear(299520, 299520)
-        self.f9 = nn.Linear(299520, 299520)
+        # self.f8 = nn.Linear(299520, 299520)
+        # self.f9 = nn.Linear(299520, 299520)
 
         self.head_linear = nn.Linear(299520, 1)
 
@@ -71,20 +71,20 @@ class AlexNet(nn.Module):
         block_out = self.c3(block_out)
         block_out = self.relu2(block_out)
         block_out = self.s4(block_out)
-        block_out = self.c5(block_out)
-        block_out = self.relu3(block_out)
-        block_out = self.c6(block_out)
-        block_out = self.relu4(block_out)
-        block_out = self.c7(block_out)
-        block_out = self.relu5(block_out)
+        # block_out = self.c5(block_out)
+        # block_out = self.relu3(block_out)
+        # block_out = self.c6(block_out)
+        # block_out = self.relu4(block_out)
+        # block_out = self.c7(block_out)
+        # block_out = self.relu5(block_out)
 
         conv_flat = block_out.view(
             block_out.size(0),
             -1,
         )
-        linear_output = self.f8(conv_flat)
-        linear_output = self.f9(linear_output)
-        linear_output = self.head_linear(linear_output)
+        # linear_output = self.f8(conv_flat)
+        # linear_output = self.f9(linear_output)
+        linear_output = self.head_linear(conv_flat)
 
         return linear_output
 

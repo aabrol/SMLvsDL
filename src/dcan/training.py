@@ -10,8 +10,9 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-from dcan.dsets import InfantMRIDataset
-from dcan.model import LunaModel
+from dcan.dsets.age import MRIAgeDataset
+from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
+from dcan.model.luna_model import LunaModel
 from util.logconf import logging
 from util.util import enumerateWithEstimate
 
@@ -54,11 +55,17 @@ class InfantMRITrainingApp:
                             help="Data prefix to use for Tensorboard run. Defaults to chapter.",
                             )
 
+        parser.add_argument('--dset',
+                            help="Name of Dataset.",
+                            default='MRIAgeDataset',
+                            )
+
         parser.add_argument('comment',
                             help="Comment suffix for Tensorboard run.",
                             nargs='?',
                             default='dwlpt',
                             )
+
         self.cli_args = parser.parse_args(sys_argv)
         self.time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
 
@@ -86,10 +93,14 @@ class InfantMRITrainingApp:
         return Adam(self.model.parameters())
 
     def initTrainDl(self):
-        train_ds = InfantMRIDataset(
-            val_stride=10,
-            isValSet_bool=False,
-        )
+        if self.cli_args.dset == 'MRIAgeDataset':
+            train_ds = MRIAgeDataset(
+                val_stride=10,
+                isValSet_bool=False,)
+        else:
+            train_ds = MRIMotionQcScoreDataset(
+                val_stride=10,
+                isValSet_bool=False,)
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -105,10 +116,16 @@ class InfantMRITrainingApp:
         return train_dl
 
     def initValDl(self):
-        val_ds = InfantMRIDataset(
-            val_stride=10,
-            isValSet_bool=True,
-        )
+        if self.cli_args.dset == 'MRIAgeDataset':
+            val_ds = MRIAgeDataset(
+                val_stride=10,
+                isValSet_bool=False,
+            )
+        else:
+            val_ds = MRIMotionQcScoreDataset(
+                val_stride=10,
+                isValSet_bool=False,
+            )
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -151,6 +168,9 @@ class InfantMRITrainingApp:
             trnMetrics_t = self.doTraining(epoch_ndx, train_dl)
             self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
 
+            rmse = self.get_rmse(train_dl)
+            log.info(f'Epoch {epoch_ndx}: training rmse: {rmse}')
+
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
             self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
@@ -170,6 +190,7 @@ class InfantMRITrainingApp:
             "E{} Training".format(epoch_ndx),
             start_ndx=train_dl.num_workers,
         )
+        loss_f = 0.0
         for batch_ndx, batch_tup in batch_iter:
             self.optimizer.zero_grad()
 
@@ -179,6 +200,9 @@ class InfantMRITrainingApp:
                 train_dl.batch_size,
                 trnMetrics_g
             )
+
+            with torch.no_grad():
+                loss_f += float(loss_var.detach())
 
             loss_var.backward()
             self.optimizer.step()
@@ -191,6 +215,7 @@ class InfantMRITrainingApp:
             #         self.trn_writer.close()
 
         self.totalTrainingSamples_count += len(train_dl.dataset)
+        log.info(f'Epoch {epoch_ndx}: training loss: {loss_f}')
 
         return trnMetrics_g.to('cpu')
 

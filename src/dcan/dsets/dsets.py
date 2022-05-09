@@ -1,19 +1,14 @@
-import copy
 import csv
 import functools
 import glob
+import logging
 import os
-import random
 from collections import namedtuple
+
+from util.disk import getCache
 
 import nibabel as nib
 import numpy as np
-import torch
-import torch.cuda
-from torch.utils.data import Dataset
-
-from util.disk import getCache
-from util.logconf import logging
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
@@ -26,6 +21,7 @@ CandidateInfoTuple = namedtuple(
     'CandidateInfoTuple',
     'series_uid, eid_str, ses_str, age_int, sex_str, t1_t2_str, run_x_try_int, smriPath_str, motionQCscore_int, passfail_str, notes_str, is_male_bool'
 )
+
 
 @functools.lru_cache(1)
 def getCandidateInfoList(requireOnDisk_bool=True):
@@ -73,6 +69,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
     candidateInfo_list.sort(reverse=True)
     return candidateInfo_list
 
+
 class Mri:
     def __init__(self, smri_path):
         mri_path = glob.glob(
@@ -101,57 +98,3 @@ def getMriRawCandidate(series_uid):
     mri = getMri(series_uid)
     mri_chunk = mri.getRawCandidate()
     return mri_chunk
-
-
-class InfantMRIDataset(Dataset):
-    def __init__(self,
-                 val_stride=0,
-                 isValSet_bool=None,
-                 series_uid=None,
-                 sortby_str='random',
-            ):
-        self.candidateInfo_list = copy.copy(getCandidateInfoList())
-
-        if series_uid:
-            self.candidateInfo_list = [
-                x for x in self.candidateInfo_list if x.series_uid == series_uid
-            ]
-
-        if isValSet_bool:
-            assert val_stride > 0, val_stride
-            self.candidateInfo_list = self.candidateInfo_list[::val_stride]
-            assert self.candidateInfo_list
-        elif val_stride > 0:
-            del self.candidateInfo_list[::val_stride]
-            assert self.candidateInfo_list
-
-        if sortby_str == 'random':
-            random.shuffle(self.candidateInfo_list)
-        elif sortby_str == 'series_uid':
-            self.candidateInfo_list.sort(key=lambda x: (x.series_uid, x.center_xyz))
-        elif sortby_str == 'label_and_size':
-            pass
-        else:
-            raise Exception("Unknown sort: " + repr(sortby_str))
-
-        log.info("{!r}: {} {} samples".format(
-            self,
-            len(self.candidateInfo_list),
-            "validation" if isValSet_bool else "training",
-        ))
-
-    def __len__(self):
-        return len(self.candidateInfo_list)
-
-    def __getitem__(self, ndx):
-        candidateInfo_tup = self.candidateInfo_list[ndx]
-
-        candidate_a = getMriRawCandidate(
-            candidateInfo_tup.series_uid,
-        )
-        candidate_t = torch.from_numpy(candidate_a).to(torch.float32)
-        candidate_t = candidate_t.unsqueeze(0)
-
-        age_t = torch.tensor(candidateInfo_tup.age_int, dtype=torch.double)
-
-        return candidate_t, age_t, candidateInfo_tup.series_uid

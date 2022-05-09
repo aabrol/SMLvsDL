@@ -44,8 +44,6 @@ class LunaModel(nn.Module):
                     bound = 1 / math.sqrt(fan_out)
                     nn.init.normal_(m.bias, -bound, bound)
 
-
-
     def forward(self, input_batch):
         bn_output = self.tail_batchnorm(input_batch)
 
