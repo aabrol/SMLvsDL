@@ -303,7 +303,7 @@ class InfantMRITrainingApp:
             mode_str,
             metrics_t,
     ):
-        # TODO Add tensor board writers.
+        self.initTensorboardWriters()
         log.info("E{} {}".format(
             epoch_ndx,
             type(self).__name__,
