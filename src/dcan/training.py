@@ -175,16 +175,17 @@ class InfantMRITrainingApp:
             ))
 
             trnMetrics_t = self.doTraining(epoch_ndx, train_dl)
-            self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
+#            self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
 
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
-            self.logMetrics(epoch_ndx, 'val', valMetrics_t)
+#            self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
         if hasattr(self, 'trn_writer'):
             self.trn_writer.close()
             self.val_writer.close()
 
     def doTraining(self, epoch_ndx, train_dl):
+        self.initTensorboardWriters()
         self.model.train()
         trnMetrics_g = torch.zeros(
             METRICS_SIZE,
@@ -204,7 +205,7 @@ class InfantMRITrainingApp:
                 batch_ndx,
                 batch_tup,
                 train_dl.batch_size,
-                trnMetrics_g
+                trnMetrics_g, epoch_ndx, True
             )
 
             loss_var.backward()
@@ -237,49 +238,35 @@ class InfantMRITrainingApp:
             )
             for batch_ndx, batch_tup in batch_iter:
                 self.computeBatchLoss(
-                    batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g)
+                    batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g, epoch_ndx, False)
 
         return valMetrics_g.to('cpu')
 
-    def get_rmse(self, val_dl):
-        with torch.no_grad():
-            self.model.eval()
-
-            batch_iter = enumerateWithEstimate(
-                val_dl,
-                "Validation-RMSE ",
-                start_ndx=val_dl.num_workers,
-            )
-            n = 0
-            total_squared_error = 0.0
-            for batch_ndx, batch_tup in batch_iter:
-                mean_loss = self.compute_batch_squared_error(batch_tup)
-                n += len(batch_tup[0])
-                total_squared_error += mean_loss
-            rmse = math.sqrt(total_squared_error / n)
-
-        return rmse
-
-    def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
+    def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g, epoch, is_training):
         input_t, label_t, _series_list = batch_tup
 
-        input_g = input_t.to(self.device, non_blocking=True)
+        x = input_t.to(self.device, non_blocking=True)
         label_g = label_t.to(self.device, non_blocking=True)
 
-        logits_g = self.model(input_g)
+        y1 = self.model(x)
 
         loss_func = nn.L1Loss()
         loss_g = loss_func(
             label_g.unsqueeze(1),
-            logits_g,
+            y1,
         )
+        if is_training:
+            self.trn_writer.add_scalar("Loss/train", loss_g, epoch)
+        else:
+            self.val_writer.add_scalar("Loss/validation", loss_g, epoch)
+
         start_ndx = batch_ndx * batch_size
         end_ndx = start_ndx + label_t.size(0)
 
         metrics_g[METRICS_LABEL_NDX, start_ndx:end_ndx] = \
             label_g[0]
         metrics_g[METRICS_PRED_NDX, start_ndx:end_ndx] = \
-            logits_g[0].detach()
+            y1[0].detach()
         metrics_g[METRICS_LOSS_NDX, start_ndx:end_ndx] = \
             loss_g
 
@@ -303,7 +290,6 @@ class InfantMRITrainingApp:
             mode_str,
             metrics_t,
     ):
-        self.initTensorboardWriters()
         log.info("E{} {}".format(
             epoch_ndx,
             type(self).__name__,
