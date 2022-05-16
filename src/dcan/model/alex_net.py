@@ -19,12 +19,12 @@ class AlexNet(nn.Module):
         self.c1 = nn.Conv3d(in_channels=in_channels, out_channels=conv_channels, kernel_size=(11, 11, 11), stride=(4, 4, 4), padding="valid")
         self.relu1 = nn.ReLU(inplace=True)
 
-        self.s2 = nn.MaxPool3d(kernel_size=3, stride=2, padding='valid')
+        self.s2 = nn.MaxPool3d(kernel_size=3, stride=2, padding=(0, 0, 0))
 
-        self.c3 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(5, 5, 5), stride=(1, 1, 1), padding='valid')
+        self.c3 = nn.Conv3d(in_channels=1, out_channels=16, kernel_size=(5, 5, 5), stride=(1, 1, 1), padding=(0, 0, 0))
         self.relu2 = nn.ReLU(inplace=True)
 
-        self.s4 = nn.MaxPool3d(kernel_size=3, stride=2, padding='valid')
+        self.s4 = nn.MaxPool3d(kernel_size=3, stride=2, padding=(0, 0, 0))
 
         # self.c5 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
         # self.relu3 = nn.ReLU(inplace=True)
@@ -38,7 +38,7 @@ class AlexNet(nn.Module):
         # self.f8 = nn.Linear(299520, 299520)
         # self.f9 = nn.Linear(299520, 299520)
 
-        self.head_linear = nn.Linear(299520, 1)
+        self.head_linear = nn.Linear(4346496, 1)
 
         self._init_weights()
 
