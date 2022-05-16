@@ -13,6 +13,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dcan.dsets.age import MRIAgeDataset
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
+from dcan.model.alex_net import AlexNet
 from util.logconf import logging
 from util.util import enumerateWithEstimate
 
@@ -51,8 +52,8 @@ class InfantMRITrainingApp:
                             )
 
         parser.add_argument('--tb-prefix',
-                            default='p2ch11',
-                            help="Data prefix to use for Tensorboard run. Defaults to chapter.",
+                            default='dcan',
+                            help="Data prefix to use for Tensorboard run. Defaults to dcan.",
                             )
 
         parser.add_argument('--dset',
@@ -63,7 +64,12 @@ class InfantMRITrainingApp:
         parser.add_argument('comment',
                             help="Comment suffix for Tensorboard run.",
                             nargs='?',
-                            default='dwlpt',
+                            default='loes_scoring',
+                            )
+
+        parser.add_argument('--model',
+                            help="Model type.",
+                            default='AlexNet',
                             )
 
         self.cli_args = parser.parse_args(sys_argv)
@@ -76,11 +82,14 @@ class InfantMRITrainingApp:
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
-        self.model = self.initModel()
+        self.model = self.initModel(self.cli_args.model)
         self.optimizer = self.initOptimizer()
 
-    def initModel(self):
-        model = LunaModel()
+    def initModel(self, model_name):
+        if model_name.lower() == 'luna':
+            model = LunaModel()
+        else:
+            model = AlexNet()
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
@@ -96,11 +105,11 @@ class InfantMRITrainingApp:
         if self.cli_args.dset == 'MRIAgeDataset':
             train_ds = MRIAgeDataset(
                 val_stride=10,
-                isValSet_bool=False,)
+                isValSet_bool=False, )
         else:
             train_ds = MRIMotionQcScoreDataset(
                 val_stride=10,
-                isValSet_bool=False,)
+                isValSet_bool=False, )
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -156,7 +165,6 @@ class InfantMRITrainingApp:
         val_dl = self.initValDl()
 
         for epoch_ndx in range(1, self.cli_args.epochs + 1):
-
             log.info("Epoch {} of {}, {}/{} batches of size {}*{}".format(
                 epoch_ndx,
                 self.cli_args.epochs,
@@ -175,7 +183,6 @@ class InfantMRITrainingApp:
         if hasattr(self, 'trn_writer'):
             self.trn_writer.close()
             self.val_writer.close()
-
 
     def doTraining(self, epoch_ndx, train_dl):
         self.model.train()
@@ -213,7 +220,6 @@ class InfantMRITrainingApp:
         self.totalTrainingSamples_count += len(train_dl.dataset)
 
         return trnMetrics_g.to('cpu')
-
 
     def doValidation(self, epoch_ndx, val_dl):
         with torch.no_grad():
