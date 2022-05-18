@@ -26,14 +26,14 @@ class AlexNet(nn.Module):
 
         self.s4 = nn.MaxPool3d(kernel_size=3, stride=2, padding=(0, 0, 0))
 
-        # self.c5 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        # self.relu3 = nn.ReLU(inplace=True)
-        #
-        # self.c6 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        # self.relu4 = nn.ReLU(inplace=True)
-        #
-        # self.c7 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
-        # self.relu5 = nn.ReLU(inplace=True)
+        self.c5 = nn.Conv3d(in_channels=2, out_channels=2, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        self.relu3 = nn.ReLU(inplace=True)
+
+        self.c6 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        self.relu4 = nn.ReLU(inplace=True)
+
+        self.c7 = nn.Conv3d(in_channels=2, out_channels=16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding='same')
+        self.relu5 = nn.ReLU(inplace=True)
 
         # self.f8 = nn.Linear(299520, 299520)
         # self.f9 = nn.Linear(299520, 299520)
