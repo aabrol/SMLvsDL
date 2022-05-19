@@ -10,6 +10,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
+from aabrol.models import AlexNet3D_Dropout
 from dcan.dsets.age import MRIAgeDataset
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
@@ -89,7 +90,7 @@ class InfantMRITrainingApp:
         if model_name.lower() == 'luna':
             model = LunaModel()
         else:
-            model = AlexNet()
+            model = AlexNet3D_Dropout()
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
@@ -201,14 +202,14 @@ class InfantMRITrainingApp:
         for batch_ndx, batch_tup in batch_iter:
             self.optimizer.zero_grad()
 
-            loss_var = self.computeBatchLoss(
+            loss = self.computeBatchLoss(
                 batch_ndx,
                 batch_tup,
                 train_dl.batch_size,
                 trnMetrics_g, epoch_ndx, True
             )
 
-            loss_var.backward()
+            loss.float().backward()
             self.optimizer.step()
 
             # # This is for adding the model graph to TensorBoard.
@@ -246,31 +247,28 @@ class InfantMRITrainingApp:
         input_t, label_t, _series_list = batch_tup
 
         x = input_t.to(self.device, non_blocking=True)
-        label_g = label_t.to(self.device, non_blocking=True)
+        labels = label_t.to(self.device, non_blocking=True)
 
-        y1 = self.model(x)
+        outputs = self.model(x)
 
-        loss_func = nn.L1Loss()
-        loss_g = loss_func(
-            label_g.unsqueeze(1),
-            y1,
-        )
+        criterion = nn.L1Loss()
+        loss = criterion(outputs[0].squeeze(), labels)
         if is_training:
-            self.trn_writer.add_scalar("Loss/train", loss_g, epoch)
+            self.trn_writer.add_scalar("Loss/train", loss, epoch)
         else:
-            self.val_writer.add_scalar("Loss/validation", loss_g, epoch)
+            self.val_writer.add_scalar("Loss/validation", loss, epoch)
 
         start_ndx = batch_ndx * batch_size
         end_ndx = start_ndx + label_t.size(0)
 
         metrics_g[METRICS_LABEL_NDX, start_ndx:end_ndx] = \
-            label_g[0]
-        metrics_g[METRICS_PRED_NDX, start_ndx:end_ndx] = \
-            y1[0].detach()
+            labels[0]
+        # metrics_g[METRICS_PRED_NDX, start_ndx:end_ndx] = \
+        #     outputs[0]
         metrics_g[METRICS_LOSS_NDX, start_ndx:end_ndx] = \
-            loss_g
+            loss
 
-        return loss_g.mean()
+        return loss.mean().float()
 
     def compute_batch_squared_error(self, batch_tup):
         input_t, label_t, _ = batch_tup

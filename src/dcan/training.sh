@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=p2ch11.training
+#SBATCH --job-name=alexnet.training
 #SBATCH --mem=90g
 #SBATCH --time=24:00:00
 #SBATCH -p v100
