@@ -19,4 +19,4 @@ cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src"
 /home/miran045/reine097/projects/AlexNet_Abrol2021/venv/bin/python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=4 --batch-size=8 \
-  --tb-prefix="age_regression" --epochs=100 --dset="MRIMotionQcScoreDataset" "dcan"
+  --tb-prefix="motion_qc_score_regression" --epochs=100 --dset="MRIMotionQcScoreDataset" "dcan"

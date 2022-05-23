@@ -1,6 +1,5 @@
 import argparse
 import datetime
-import math
 import os
 import sys
 
@@ -10,11 +9,10 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-from aabrol.models import AlexNet3D_Dropout
 from dcan.dsets.age import MRIAgeDataset
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
-from dcan.model.alex_net import AlexNet
+from reprex.models import AlexNet3D_Dropout
 from util.logconf import logging
 from util.util import enumerateWithEstimate
 
@@ -209,7 +207,9 @@ class InfantMRITrainingApp:
                 trnMetrics_g, epoch_ndx, True
             )
 
-            loss.float().backward()
+            print('loss:', loss)
+            print('type(loss):', type(loss))
+            loss.backward()
             self.optimizer.step()
 
             # # This is for adding the model graph to TensorBoard.
@@ -251,7 +251,7 @@ class InfantMRITrainingApp:
 
         outputs = self.model(x)
 
-        criterion = nn.L1Loss()
+        criterion = nn.MSELoss()
         loss = criterion(outputs[0].squeeze(), labels)
         if is_training:
             self.trn_writer.add_scalar("Loss/train", loss, epoch)
@@ -268,7 +268,7 @@ class InfantMRITrainingApp:
         metrics_g[METRICS_LOSS_NDX, start_ndx:end_ndx] = \
             loss
 
-        return loss.mean().float()
+        return loss.mean()
 
     def compute_batch_squared_error(self, batch_tup):
         input_t, label_t, _ = batch_tup

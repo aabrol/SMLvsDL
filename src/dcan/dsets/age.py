@@ -64,4 +64,4 @@ class MRIAgeDataset(Dataset):
 
         age_t = torch.tensor(candidateInfo_tup.age_int, dtype=torch.double)
 
-        return candidate_t, age_t, candidateInfo_tup.series_uid
+        return candidate_t, age_t.float(), candidateInfo_tup.series_uid

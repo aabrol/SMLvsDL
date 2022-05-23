@@ -32,10 +32,10 @@ class AlexNet3D_Dropout(nn.Module):
         )
 
         self.classifier = nn.Sequential(nn.Dropout(),
-                                        nn.Linear(256, 64),
+                                        nn.Linear(9600, 64),
                                         nn.ReLU(inplace=True),
                                         nn.Dropout(),
-                                        nn.Linear(64, num_classes),
+                                        nn.Linear(64, 1),
                                         )
 
         for m in self.modules():
