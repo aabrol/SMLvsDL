@@ -207,8 +207,6 @@ class InfantMRITrainingApp:
                 trnMetrics_g, epoch_ndx, True
             )
 
-            print('loss:', loss)
-            print('type(loss):', type(loss))
             loss.backward()
             self.optimizer.step()
 
