@@ -18,12 +18,10 @@ conda activate /panfs/roc/groups/4/miran045/reine097/projects/AlexNet_Abrol2021/
 
 echo CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES
 
-# sg faird -c "python /home/faird/shared/projects/3D_MRI_GAN/tio_unet/code/trainXtoY.py --config /home/faird/shared/projects/3D_MRI_GAN/tio_unet/experiments/ECHO_51/ECHO_config.yaml"
 cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src":"/home/miran045/reine097/projects/AlexNet_Abrol2021/reprex"
 python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=1 \
-  --tb-prefix="age_regression" --epochs=50 --model="luna" "dcan"
+  --tb-prefix="age_regression" --epochs=10 --model="luna" "dcan"
 
 echo COMPLETE
-
