@@ -9,7 +9,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
 import pandas as pd
 import nibabel as nib
-from models import AlexNet3D_Dropout
+from models import AlexNet3D_Dropout_Regression
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, mean_absolute_error, explained_variance_score, \
     mean_squared_error, r2_score
 from dataclasses import dataclass
@@ -410,7 +410,7 @@ def initializeNet(cfg):
     # Initialize net based on model type (mt, nc)
     net = None
     if cfg.mt == 'AlexNet3D_Dropout':
-        net = AlexNet3D_Dropout(num_classes=cfg.nc)
+        net = AlexNet3D_Dropout_Regression(num_classes=cfg.nc)
     else:
         print('Check model type')
 

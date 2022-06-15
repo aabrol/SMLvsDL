@@ -32,7 +32,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
     presentOnDisk_set = {os.path.split(p)[-1][:-7] for p in mri_list}
 
     candidateInfo_list = []
-    with open('data/ABCD/qc_with_paths.csv', "r") as f:
+    with open('data/BCP/qc_with_paths.csv', "r") as f:
         for row in list(csv.reader(f))[1:]:
             eid_ses_t1_t2_run_x_try_uid = '_'.join([row[0], row[1], 'run-' + row[5].zfill(3), row[4].upper() + 'w'])
 

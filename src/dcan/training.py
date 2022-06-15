@@ -12,7 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dcan.dsets.age import MRIAgeDataset
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
-from reprex.models import AlexNet3D_Dropout
+from reprex.models import AlexNet3D_Dropout_Regression
 from util.logconf import logging
 from util.util import enumerateWithEstimate
 
@@ -88,7 +88,7 @@ class InfantMRITrainingApp:
         if model_name.lower() == 'luna':
             model = LunaModel()
         else:
-            model = AlexNet3D_Dropout()
+            model = AlexNet3D_Dropout_Regression()
         if self.use_cuda:
             log.info("Using CUDA; {} devices.".format(torch.cuda.device_count()))
             if torch.cuda.device_count() > 1:
@@ -250,7 +250,7 @@ class InfantMRITrainingApp:
         outputs = self.model(x)
 
         criterion = nn.MSELoss()
-        loss = criterion(outputs[0].squeeze(), labels)
+        loss = criterion(outputs[0], labels)
         if is_training:
             self.trn_writer.add_scalar("Loss/train", loss, epoch)
         else:

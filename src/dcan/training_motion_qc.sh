@@ -1,6 +1,7 @@
 #!/bin/sh
 
 #SBATCH --job-name=motion-training-alex-net # job name
+
 #SBATCH --mem=90g        # memory per cpu-core (what is the default?)
 #SBATCH --time=16:00:00          # total run time limit (HH:MM:SS)
 #SBATCH -p v100
