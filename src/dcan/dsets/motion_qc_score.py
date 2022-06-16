@@ -73,4 +73,4 @@ class MRIMotionQcScoreDataset(Dataset):
 
         motion_qc_score_t = torch.tensor(candidateInfo_tup.motionQCscore_int, dtype=torch.double)
 
-        return candidate_t, motion_qc_score_t, candidateInfo_tup.series_uid
+        return candidate_t, motion_qc_score_t.float(), candidateInfo_tup.series_uid

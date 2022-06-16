@@ -19,7 +19,7 @@ from util.util import enumerateWithEstimate
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
 log.setLevel(logging.INFO)
-log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 # Used for computeBatchLoss and logMetrics to index into metrics_t/metrics_a
 METRICS_LABEL_NDX = 0
@@ -57,7 +57,7 @@ class InfantMRITrainingApp:
 
         parser.add_argument('--dset',
                             help="Name of Dataset.",
-                            default='MRIAgeDataset',
+                            default='MRIMotionQcScoreDataset',
                             )
 
         parser.add_argument('comment',
@@ -94,6 +94,7 @@ class InfantMRITrainingApp:
             if torch.cuda.device_count() > 1:
                 model = nn.DataParallel(model)
             model = model.to(self.device)
+        log.info("Model architecture {}".format(model))
         return model
 
     def initOptimizer(self):
@@ -109,6 +110,7 @@ class InfantMRITrainingApp:
             train_ds = MRIMotionQcScoreDataset(
                 val_stride=10,
                 isValSet_bool=False, )
+        log.info(f'train_ds: {train_ds}')
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -134,6 +136,7 @@ class InfantMRITrainingApp:
                 val_stride=10,
                 isValSet_bool=False,
             )
+        log.info(f'val_ds: {val_ds}')
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -250,7 +253,10 @@ class InfantMRITrainingApp:
         outputs = self.model(x)
 
         criterion = nn.MSELoss()
-        loss = criterion(outputs[0], labels)
+        actual = outputs[0].squeeze(1)
+        log.debug(f'actual: {actual}')
+        log.debug(f'labels: {labels}')
+        loss = criterion(actual, labels)
         if is_training:
             self.trn_writer.add_scalar("Loss/train", loss, epoch)
         else:
