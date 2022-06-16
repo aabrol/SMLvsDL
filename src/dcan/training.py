@@ -9,7 +9,6 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-from dcan.dsets.age import MRIAgeDataset
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
 from reprex.models import AlexNet3D_Dropout_Regression
@@ -102,14 +101,9 @@ class InfantMRITrainingApp:
         return Adam(self.model.parameters())
 
     def initTrainDl(self):
-        if self.cli_args.dset == 'MRIAgeDataset':
-            train_ds = MRIAgeDataset(
-                val_stride=10,
-                isValSet_bool=False, )
-        else:
-            train_ds = MRIMotionQcScoreDataset(
-                val_stride=10,
-                isValSet_bool=False, )
+        train_ds = MRIMotionQcScoreDataset(
+            val_stride=10,
+            isValSet_bool=False, )
         log.info(f'train_ds: {train_ds}')
 
         batch_size = self.cli_args.batch_size
@@ -126,16 +120,10 @@ class InfantMRITrainingApp:
         return train_dl
 
     def initValDl(self):
-        if self.cli_args.dset == 'MRIAgeDataset':
-            val_ds = MRIAgeDataset(
-                val_stride=10,
-                isValSet_bool=False,
-            )
-        else:
-            val_ds = MRIMotionQcScoreDataset(
-                val_stride=10,
-                isValSet_bool=False,
-            )
+        val_ds = MRIMotionQcScoreDataset(
+            val_stride=10,
+            isValSet_bool=False,
+        )
         log.info(f'val_ds: {val_ds}')
 
         batch_size = self.cli_args.batch_size
