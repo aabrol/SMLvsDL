@@ -22,6 +22,6 @@ cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src":"/home/miran045/reine097/projects/AlexNet_Abrol2021/reprex"
 python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=1 \
-  --tb-prefix="MRIMotionQcScore" --epochs=10 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "dcan"
+  --tb-prefix="MRIMotionQcScore" --epochs=100 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "dcan"
 
 echo COMPLETE
