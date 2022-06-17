@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --job-name=luna.training.agate
-#SBATCH --time=2:00:00
+#SBATCH --time=8:00:00
 #SBATCH --partition=a100-4
 #SBATCH --mem-per-cpu=32G
 #SBATCH --gres=gpu:a100:1
@@ -21,7 +21,7 @@ echo CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES
 cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src":"/home/miran045/reine097/projects/AlexNet_Abrol2021/reprex"
 python \
-  /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=1 \
+  /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=8 \
   --tb-prefix="MRIMotionQcScore" --epochs=100 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "dcan"
 
 echo COMPLETE
