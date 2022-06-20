@@ -3,11 +3,14 @@ import datetime
 import os
 import sys
 
+import numpy as np
+
+from torch.utils.tensorboard import SummaryWriter
+
 import torch
 import torch.nn as nn
-from torch.optim import Adam
+from torch.optim import SGD, Adam
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
 
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
@@ -165,10 +168,10 @@ class InfantMRITrainingApp:
             ))
 
             trnMetrics_t = self.doTraining(epoch_ndx, train_dl)
-#            self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
+            self.logMetrics(epoch_ndx, 'trn', trnMetrics_t)
 
             valMetrics_t = self.doValidation(epoch_ndx, val_dl)
-#            self.logMetrics(epoch_ndx, 'val', valMetrics_t)
+            self.logMetrics(epoch_ndx, 'val', valMetrics_t)
 
         if hasattr(self, 'trn_writer'):
             self.trn_writer.close()
@@ -261,18 +264,6 @@ class InfantMRITrainingApp:
             loss
 
         return loss.mean()
-
-    def compute_batch_squared_error(self, batch_tup):
-        input_t, label_t, _ = batch_tup
-
-        input_g = input_t.to(self.device, non_blocking=True)
-        expected_value_g = label_t.to(self.device, non_blocking=True)
-
-        actual_value_g = self.model(input_g)
-
-        squared_error_sum = sum([(expected_value_g[i] - actual_value_g[i]) ** 2 for i in range(len(input_g))])
-
-        return squared_error_sum
 
     def logMetrics(
             self,
