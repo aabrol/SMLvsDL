@@ -1,11 +1,11 @@
 #!/bin/bash -l
 #SBATCH --job-name=alex-net.training.agate
-#SBATCH --time=8:00:00
+#SBATCH --time=16:00:00
 #SBATCH --partition=a100-4
 #SBATCH --mem-per-cpu=32G
 #SBATCH --gres=gpu:a100:1
 #SBATCH --output=alex_net.training.agate-%j.out
-#SBATCH --error=alex-net.training.agate-%j.err
+#SBATCH --error=alex_net.training.agate-%j.err
 
 pwd; hostname; date
 echo jobid=${SLURM_JOB_ID}; echo nodelist=${SLURM_JOB_NODELIST}
@@ -22,6 +22,6 @@ cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src":"/home/miran045/reine097/projects/AlexNet_Abrol2021/reprex"
 python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=8 \
-  --tb-prefix="MRIMotionQcScore" --epochs=100 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "model_test_delete_me"
+  --tb-prefix="MRIMotionQcScore" --epochs=1000 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "model_test_delete_me"
 
 echo COMPLETE

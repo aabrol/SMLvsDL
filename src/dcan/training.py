@@ -1,16 +1,15 @@
 import argparse
 import datetime
 import os
+import statistics
 import sys
-
-import numpy as np
-
-from torch.utils.tensorboard import SummaryWriter
+from math import sqrt
 
 import torch
 import torch.nn as nn
-from torch.optim import SGD, Adam
+from torch.optim import Adam
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 from dcan.dsets.motion_qc_score import MRIMotionQcScoreDataset
 from dcan.model.luna_model import LunaModel
@@ -107,7 +106,6 @@ class InfantMRITrainingApp:
         train_ds = MRIMotionQcScoreDataset(
             val_stride=10,
             isValSet_bool=False, )
-        log.info(f'train_ds: {train_ds}')
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -127,7 +125,6 @@ class InfantMRITrainingApp:
             val_stride=10,
             isValSet_bool=False,
         )
-        log.info(f'val_ds: {val_ds}')
 
         batch_size = self.cli_args.batch_size
         if self.use_cuda:
@@ -150,6 +147,33 @@ class InfantMRITrainingApp:
                 log_dir=log_dir + '-trn_reg-' + self.cli_args.comment)
             self.val_writer = SummaryWriter(
                 log_dir=log_dir + '-val_reg-' + self.cli_args.comment)
+
+    def get_standardized_rmse(self):
+        with torch.no_grad():
+            val_dl = self.initValDl()
+            self.model.eval()
+            batch_iter = enumerateWithEstimate(
+                val_dl,
+                "get_standardized_rmse",
+                start_ndx=val_dl.num_workers,
+            )
+            squares_list = []
+            prediction_list = []
+            for batch_ndx, batch_tup in batch_iter:
+                input_t, label_t, _ = batch_tup
+                x = input_t.to(self.device, non_blocking=True)
+                labels = label_t.to(self.device, non_blocking=True)
+                outputs = self.model(x)
+                actual = outputs[0].squeeze(1)
+                prediction_list.extend(actual.tolist())
+                difference = torch.subtract(labels, actual)
+                squares = torch.square(difference)
+                squares_list.extend(squares.tolist())
+            rmse = sqrt(sum(squares_list) / len(squares_list))
+            sigma = statistics.stdev(prediction_list)
+
+            return rmse / sigma
+
 
     def main(self):
         log.info("Starting {}, {}".format(type(self).__name__, self.cli_args))
@@ -176,6 +200,10 @@ class InfantMRITrainingApp:
         if hasattr(self, 'trn_writer'):
             self.trn_writer.close()
             self.val_writer.close()
+
+        standardized_rmse = self.get_standardized_rmse()
+        log.info(f'standardized_rmse: {standardized_rmse}')
+
 
     def doTraining(self, epoch_ndx, train_dl):
         self.initTensorboardWriters()
