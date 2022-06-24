@@ -4,11 +4,11 @@ BCP Motion QC Score
 Model 3
 -------
 
-* Standardized RMSE: **0.3486471956656407**
+* Standardized RMSE (on validation set): **0.3486471956656407**
 * Mean squared error (on validation set): 0.1235
 * Model architecture: AlexNet3D_Dropout_Regression
 * Optimizer: Adam
-* Epochs: 100
+* Epochs: 1000
 
 Model 2
 -------
