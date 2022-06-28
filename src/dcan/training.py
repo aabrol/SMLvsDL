@@ -72,8 +72,14 @@ class InfantMRITrainingApp:
                             default='AlexNet',
                             )
 
-        self.cli_args = parser.parse_args(sys_argv)
         self.time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
+        # See https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference
+        parser.add_argument('--model-save-location',
+            help="Where to save the trained model.",
+            default=f'./model-{self.time_str}.pt',
+        )
+
+        self.cli_args = parser.parse_args(sys_argv)
 
         self.trn_writer = None
         self.val_writer = None
@@ -164,7 +170,11 @@ class InfantMRITrainingApp:
                 x = input_t.to(self.device, non_blocking=True)
                 labels = label_t.to(self.device, non_blocking=True)
                 outputs = self.model(x)
-                actual = outputs[0].squeeze(1)
+                # TODO Fix this.
+                # AlexNet
+                # actual = outputs[0].squeeze(1)
+                # Luna
+                actual = outputs.squeeze(1)
                 prediction_list.extend(actual.tolist())
                 difference = torch.subtract(labels, actual)
                 squares = torch.square(difference)
@@ -203,6 +213,7 @@ class InfantMRITrainingApp:
 
         standardized_rmse = self.get_standardized_rmse()
         log.info(f'standardized_rmse: {standardized_rmse}')
+        torch.save(self.model.state_dict(), self.cli_args.model_save_location)
 
 
     def doTraining(self, epoch_ndx, train_dl):
@@ -272,7 +283,11 @@ class InfantMRITrainingApp:
         outputs = self.model(x)
 
         criterion = nn.MSELoss()
-        actual = outputs[0].squeeze(1)
+        # TODO Fix this.
+        # AlexNet
+        # actual = outputs[0].squeeze(1)
+        # Luna
+        actual = outputs.squeeze(1)
         log.debug(f'actual: {actual}')
         log.debug(f'labels: {labels}')
         loss = criterion(actual, labels)

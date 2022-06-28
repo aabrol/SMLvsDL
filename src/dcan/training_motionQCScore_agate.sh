@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #SBATCH --job-name=alex-net.training.agate
-#SBATCH --time=16:00:00
+#SBATCH --time=24:00:00
 #SBATCH --partition=a100-4
-#SBATCH --mem-per-cpu=32G
+#SBATCH --mem-per-cpu=64G
 #SBATCH --gres=gpu:a100:1
 #SBATCH --output=alex_net.training.agate-%j.out
 #SBATCH --error=alex_net.training.agate-%j.err
@@ -22,6 +22,7 @@ cd /home/miran045/reine097/projects/AlexNet_Abrol2021 || exit
 export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021/src":"/home/miran045/reine097/projects/AlexNet_Abrol2021/reprex"
 python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=8 \
-  --tb-prefix="MRIMotionQcScore" --epochs=1000 --model="AlexNet" --dset="MRIMotionQcScoreDataset" "model_test_delete_me"
+  --tb-prefix="MRIMotionQcScore" --epochs=1000 --model="Luna" --dset="MRIMotionQcScoreDataset" \
+  --model-save-location="/home/feczk001/shared/data/AlexNet/model04.pt" "luna_model_04"
 
 echo COMPLETE
