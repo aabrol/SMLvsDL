@@ -75,15 +75,17 @@ class InfantMRITrainingApp:
         self.time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
         # See https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference
         parser.add_argument('--model-save-location',
-            help="Where to save the trained model.",
-            default=f'./model-{self.time_str}.pt',
-        )
+                            help="Where to save the trained model.",
+                            default=f'./model-{self.time_str}.pt',
+                            )
 
         self.cli_args = parser.parse_args(sys_argv)
 
         self.trn_writer = None
         self.val_writer = None
         self.totalTrainingSamples_count = 0
+        self.global_step_tr = 0
+        self.global_step_val = 0
 
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
@@ -184,7 +186,6 @@ class InfantMRITrainingApp:
 
             return rmse / sigma
 
-
     def main(self):
         log.info("Starting {}, {}".format(type(self).__name__, self.cli_args))
 
@@ -214,7 +215,6 @@ class InfantMRITrainingApp:
         standardized_rmse = self.get_standardized_rmse()
         log.info(f'standardized_rmse: {standardized_rmse}')
         torch.save(self.model.state_dict(), self.cli_args.model_save_location)
-
 
     def doTraining(self, epoch_ndx, train_dl):
         self.initTensorboardWriters()
@@ -292,9 +292,11 @@ class InfantMRITrainingApp:
         log.debug(f'labels: {labels}')
         loss = criterion(actual, labels)
         if is_training:
-            self.trn_writer.add_scalar("Loss/train", loss, epoch)
+            self.trn_writer.add_scalar("Loss/train", loss, self.global_step_tr)
+            self.global_step_tr += 1
         else:
-            self.val_writer.add_scalar("Loss/validation", loss, epoch)
+            self.val_writer.add_scalar("Loss/validation", loss, self.global_step_val)
+            self.global_step_val += 1
 
         start_ndx = batch_ndx * batch_size
         end_ndx = start_ndx + label_t.size(0)
@@ -333,7 +335,7 @@ class InfantMRITrainingApp:
     #
     #     for name, param in model.named_parameters():
     #         if param.requires_grad:
-    #             min_data = float(param.data.min())
+    #             min_data = float(param.ddo_validationata.min())
     #             max_data = float(param.data.max())
     #             max_extent = max(abs(min_data), abs(max_data))
     #

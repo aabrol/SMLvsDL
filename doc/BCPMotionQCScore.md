@@ -10,6 +10,16 @@ Model 3
 * Optimizer: Adam
 * Epochs: 1000
 
+Model 4
+-------
+
+* Standardized RMSE (on validation set): **0.5025856541174554**
+* Mean squared error (on validation set): 0.1426
+* Model architecture: Luna
+* Optimizer: Adam
+* Epochs: 1000
+* Location: */home/feczk001/shared/data/AlexNet/model04.pt*
+
 Model 2
 -------
 
