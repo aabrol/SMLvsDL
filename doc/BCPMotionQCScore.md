@@ -35,3 +35,13 @@ Model 1
 * Model architecture: AlexNet3D_Dropout_Regression
 * Optimizer: Adam
 * Epochs: 55
+
+Model 5
+-------
+
+* Standardized RMSE (on validation set): **[undefined---sigma was zero**
+* Mean squared error (on validation set): 0.3301
+* Model architecture: AlexNet3D_Dropout_Regression
+* Optimizer: SGD
+* Epochs: 1000
+* Location: */home/feczk001/shared/data/AlexNet/model05.pt*
