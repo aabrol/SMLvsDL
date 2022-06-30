@@ -7,7 +7,7 @@ from math import sqrt
 
 import torch
 import torch.nn as nn
-from torch.optim import Adam
+from torch.optim import Adam, SGD
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
@@ -72,6 +72,11 @@ class InfantMRITrainingApp:
                             default='AlexNet',
                             )
 
+        parser.add_argument('--optimizer',
+                            help="optimizer type.",
+                            default='Adam',
+                            )
+
         self.time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
         # See https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference
         parser.add_argument('--model-save-location',
@@ -90,10 +95,10 @@ class InfantMRITrainingApp:
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if self.use_cuda else "cpu")
 
-        self.model = self.initModel(self.cli_args.model)
-        self.optimizer = self.initOptimizer()
+        self.model = self.init_model(self.cli_args.model)
+        self.optimizer = self.init_optimizer(self.cli_args.optimizer)
 
-    def initModel(self, model_name):
+    def init_model(self, model_name):
         if model_name.lower() == 'luna':
             model = LunaModel()
         else:
@@ -106,9 +111,12 @@ class InfantMRITrainingApp:
         log.info("Model architecture {}".format(model))
         return model
 
-    def initOptimizer(self):
-        # return SGD(self.model.parameters(), lr=0.001, momentum=0.99)
-        return Adam(self.model.parameters())
+    def init_optimizer(self, optimizer):
+        if optimizer.lower() == 'sgd':
+            return SGD(self.model.parameters(), lr=0.001, momentum=0.99)
+        elif optimizer.lower() == 'adam':
+            return Adam(self.model.parameters())
+        assert False
 
     def initTrainDl(self):
         train_ds = MRIMotionQcScoreDataset(
@@ -172,11 +180,7 @@ class InfantMRITrainingApp:
                 x = input_t.to(self.device, non_blocking=True)
                 labels = label_t.to(self.device, non_blocking=True)
                 outputs = self.model(x)
-                # TODO Fix this.
-                # AlexNet
-                # actual = outputs[0].squeeze(1)
-                # Luna
-                actual = outputs.squeeze(1)
+                actual = self.get_actual(outputs)
                 prediction_list.extend(actual.tolist())
                 difference = torch.subtract(labels, actual)
                 squares = torch.square(difference)
@@ -185,6 +189,15 @@ class InfantMRITrainingApp:
             sigma = statistics.stdev(prediction_list)
 
             return rmse / sigma
+
+    def get_actual(self, outputs):
+        if self.cli_args.model.lower() == 'alexnet':
+            # AlexNet
+            actual = outputs[0].squeeze(1)
+        else:
+            # Luna
+            actual = outputs.squeeze(1)
+        return actual
 
     def main(self):
         log.info("Starting {}, {}".format(type(self).__name__, self.cli_args))
@@ -212,8 +225,12 @@ class InfantMRITrainingApp:
             self.trn_writer.close()
             self.val_writer.close()
 
-        standardized_rmse = self.get_standardized_rmse()
-        log.info(f'standardized_rmse: {standardized_rmse}')
+        try:
+            standardized_rmse = self.get_standardized_rmse()
+            log.info(f'standardized_rmse: {standardized_rmse}')
+        except ZeroDivisionError as err:
+            print('Could not compute stanardized RMSE because sigma is 0:', err)
+
         torch.save(self.model.state_dict(), self.cli_args.model_save_location)
 
     def doTraining(self, epoch_ndx, train_dl):
@@ -283,11 +300,7 @@ class InfantMRITrainingApp:
         outputs = self.model(x)
 
         criterion = nn.MSELoss()
-        # TODO Fix this.
-        # AlexNet
-        # actual = outputs[0].squeeze(1)
-        # Luna
-        actual = outputs.squeeze(1)
+        actual = self.get_actual(outputs)
         log.debug(f'actual: {actual}')
         log.debug(f'labels: {labels}')
         loss = criterion(actual, labels)
