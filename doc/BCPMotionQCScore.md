@@ -4,11 +4,14 @@ BCP Motion QC Score
 Model 3
 -------
 
+![Actual QC motion score vs. frequency of prediction](qc_motion_score_prediction.jpg)
+
 * Standardized RMSE (on validation set): **0.3486471956656407**
 * Mean squared error (on validation set): 0.1235
 * Model architecture: AlexNet3D_Dropout_Regression
 * Optimizer: Adam
 * Epochs: 1000
+* Location: */home/feczk001/shared/data/AlexNet/model03.pt*
 
 Model 4
 -------

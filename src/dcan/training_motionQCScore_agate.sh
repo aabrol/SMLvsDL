@@ -23,6 +23,6 @@ export PYTHONPATH=PYTHONPATH:"/home/miran045/reine097/projects/AlexNet_Abrol2021
 python \
   /home/miran045/reine097/projects/AlexNet_Abrol2021/src/dcan/training.py --num-workers=1 --batch-size=8 \
   --tb-prefix="MRIMotionQcScore" --epochs=1000 --model="AlexNet" --dset="MRIMotionQcScoreDataset" \
-  --model-save-location="/home/feczk001/shared/data/AlexNet/model05.pt" --optimizer="SGD" "AlexNet_model_05"
+  --model-save-location="/home/feczk001/shared/data/AlexNet/model03.pt" --optimizer="Adam" "AlexNet_model_03"
 
 echo COMPLETE

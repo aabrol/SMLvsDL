@@ -190,6 +190,29 @@ class InfantMRITrainingApp:
 
             return rmse / sigma
 
+    def get_output_distributions(self):
+        with torch.no_grad():
+            val_dl = self.initValDl()
+            self.model.eval()
+            batch_iter = enumerateWithEstimate(
+                val_dl,
+                "get_output_distributions",
+                start_ndx=val_dl.num_workers,
+            )
+            distributions = {1: [], 2: [], 3: [], 4: []}
+            for batch_ndx, batch_tup in batch_iter:
+                input_t, label_t, _ = batch_tup
+                x = input_t.to(self.device, non_blocking=True)
+                labels = label_t.to(self.device, non_blocking=True)
+                outputs = self.model(x)
+                actual = self.get_actual(outputs).tolist()
+                n = len(labels)
+                for i in range(n):
+                    label_int = int(labels[i].item())
+                    distributions[label_int].append(actual[i])
+
+        return distributions
+
     def get_actual(self, outputs):
         if self.cli_args.model.lower() == 'alexnet':
             # AlexNet
@@ -230,6 +253,9 @@ class InfantMRITrainingApp:
             log.info(f'standardized_rmse: {standardized_rmse}')
         except ZeroDivisionError as err:
             print('Could not compute stanardized RMSE because sigma is 0:', err)
+
+        output_distributions = self.get_output_distributions()
+        log.info(f'output_distributions: {output_distributions}')
 
         torch.save(self.model.state_dict(), self.cli_args.model_save_location)
 
