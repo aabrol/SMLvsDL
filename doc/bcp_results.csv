@@ -1,0 +1,3 @@
+field, learning_rate, batch_size, architecture_priors, model_capacity, num_epochs,              rmse, std_dev_of_field
+age  ,          1e-3,          8, LunaNet,                        ,            10, 4.267032153648312,        10.717538
+age  ,          1e-3,          8, LunaNet,                          ,         100,                  ,        10.717538
